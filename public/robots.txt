@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://balneariomontecastelo.com.br/sitemap.xml
