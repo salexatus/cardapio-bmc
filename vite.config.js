@@ -4,6 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // Em deploy de subpasta (ex.: GitHub Pages) defina BASE_PATH=/repo/.
+  base: process.env.BASE_PATH || '/',
   plugins: [
     react(),
     VitePWA({

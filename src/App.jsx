@@ -9,9 +9,11 @@ function AdminFallback() {
   return <div className="grid min-h-screen place-items-center bg-forest-950 text-sand-100/50">Carregando painel…</div>
 }
 
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/'
+
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route path="/" element={<SitePage />} />
         <Route
