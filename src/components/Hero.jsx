@@ -73,7 +73,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.35 }}
           className="mt-5 max-w-xl text-pretty text-base text-sand-100/90 sm:text-lg"
         >
-          {SITE.tagline}. {SITE.description}
+          {config.tagline}. {config.description}
         </motion.p>
 
         <motion.div
