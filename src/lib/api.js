@@ -17,6 +17,7 @@ const mapMenuRow = (r) => ({
   badge: r.badge || '',
   bestSeller: r.best_seller ?? r.bestSeller ?? false,
   tags: r.tags || [],
+  variations: r.variations || undefined,
   available: r.available ?? true
 })
 

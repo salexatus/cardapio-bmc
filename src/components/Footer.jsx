@@ -9,16 +9,15 @@ export default function Footer() {
       <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
-            <div className="flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-full bg-gold-shine font-display text-xl font-bold text-forest-900 shadow-gold">
-                M
-              </span>
-              <div className="leading-tight">
-                <p className="font-display text-lg font-semibold">{config.name}</p>
-                <p className="text-xs uppercase tracking-[0.18em] text-gold-300">{config.tagline}</p>
-              </div>
-            </div>
-            <p className="mt-4 max-w-xs text-sm text-sand-100/65">{config.description}</p>
+            <img
+              src={`${import.meta.env.BASE_URL}logo-bmc.png`}
+              alt={config.name}
+              className="h-16 w-auto"
+            />
+            <p className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-gold-300">
+              {config.tagline}
+            </p>
+            <p className="mt-3 max-w-xs text-sm text-sand-100/65">{config.description}</p>
           </div>
 
           <div>

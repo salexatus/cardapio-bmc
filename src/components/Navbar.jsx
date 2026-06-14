@@ -39,18 +39,12 @@ export default function Navbar({ dark, toggleDark }) {
           scrolled ? 'glass py-2.5 shadow-glass mx-3 sm:mx-auto' : 'py-3 mx-3 sm:mx-auto'
         }`}
       >
-        <a href="#top" className="flex items-center gap-2.5 shrink-0" aria-label={config.name}>
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-gold-shine text-forest-900 font-display text-lg font-bold shadow-gold">
-            M
-          </span>
-          <span className="hidden sm:block leading-tight">
-            <span className="block font-display text-base font-semibold text-forest-800 dark:text-sand-100">
-              Monte Castelo
-            </span>
-            <span className="block text-[10px] uppercase tracking-[0.18em] text-gold-500">
-              Rio Urupá
-            </span>
-          </span>
+        <a href="#top" className="flex items-center shrink-0" aria-label={config.name}>
+          <img
+            src={`${import.meta.env.BASE_URL}logo-bmc.png`}
+            alt={config.name}
+            className="h-10 w-auto drop-shadow-sm sm:h-11"
+          />
         </a>
 
         <div className="hidden items-center gap-1 md:flex">

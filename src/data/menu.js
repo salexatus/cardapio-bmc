@@ -1,269 +1,387 @@
-// Cardápio do Balneário Monte Castelo.
-// Para trocar imagens, substitua a URL `image` (use fotos 4:3 ou 1:1 em boa resolução).
+// Cardápio real do Balneário Monte Castelo (extraído dos PDFs oficiais).
+// Itens com tamanhos diferentes usam `variations` (ex.: Meia/Inteira, Copo/Jarra).
+// O campo `price` é sempre o menor valor (usado como "a partir de" no card).
 const img = (id, w = 800) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`
 
+// Imagens por tipo (validadas visualmente).
+const IMG = {
+  buffet: img('1504674900247-0877df9cc836'),
+  board: img('1452195100486-9cc805987862'),
+  friedFish: img('1623653387945-2fd25214f8fc'),
+  fishFillet: img('1580959375944-abd7e991f971'),
+  friedChicken: img('1604908176997-125f25cc6f3d'),
+  chickenWings: img('1562967914-608f82629710'),
+  grilledMeat: img('1558030006-450675393462'),
+  ribs: img('1544025162-d76694265947'),
+  sausage: img('1632778149955-e80f8ceca2e8'),
+  fries: img('1518013431117-eb1465fa5752'),
+  salad: img('1512621776951-a57141f2eefd'),
+  broth: img('1547592166-23ac45744acd'),
+  pudim: img('1488477181946-6428a0291777'),
+  beerBottle: img('1608270586620-248524c67de9'),
+  beerMug: img('1555396273-367ea4eb4db5'),
+  cocaCan: img('1554866585-cd94860890b7'),
+  soda: img('1581636625402-29b2a704ef13'),
+  water: img('1523362628745-0c100150b504'),
+  energy: img('1622543925917-763c34d1a86e'),
+  isotonic: img('1625708458528-802ec79b1ed8'),
+  caipirinha: img('1551538827-9c037cb4f32a'),
+  juiceJar: img('1622597467836-f3285f2131b8'),
+  juiceCups: img('1424847651672-bf20a4b0982b')
+}
+
 export const CATEGORIES = [
   { id: 'refeicoes', label: 'Refeições', icon: '🍛' },
-  { id: 'hamburgueres', label: 'Hambúrgueres', icon: '🍔' },
   { id: 'porcoes', label: 'Porções', icon: '🍟' },
-  { id: 'bebidas', label: 'Bebidas', icon: '🥤' },
-  { id: 'drinks', label: 'Drinks', icon: '🍹' }
+  { id: 'bebidas', label: 'Bebidas', icon: '🍺' },
+  { id: 'sucos', label: 'Sucos', icon: '🧃' },
+  { id: 'sobremesas', label: 'Sobremesas', icon: '🍮' }
 ]
 
+// Helper para itens Inteira/Meia (price = menor valor).
+const whole = (meia, inteira) => ({
+  price: meia,
+  variations: [
+    { label: 'Meia', price: meia },
+    { label: 'Inteira', price: inteira }
+  ]
+})
+
 export const MENU = [
-  // ---------- REFEIÇÕES ----------
+  // ===================== REFEIÇÕES =====================
   {
-    id: 'r1',
+    id: 'ref-kg-carne-peixe',
     category: 'refeicoes',
-    name: 'Peixe na Telha do Urupá',
+    name: 'Comida por Quilo — Carne e Peixe',
     description:
-      'Filé de tambaqui assado no fogão a lenha, servido na telha com purê de banana, arroz, farofa crocante e vinagrete da casa.',
-    price: 89.9,
-    serves: 'Serve 2 pessoas',
-    image: img('1485921325833-c519f76c4927'),
+      'Self-service completo no capricho: arroz, feijão, saladas, acompanhamentos e carnes e peixes do dia. Preço por quilo.',
+    serves: 'Por quilo',
+    image: IMG.buffet,
+    badge: 'Destaque',
+    bestSeller: true,
+    price: 69.5,
+    tags: ['por quilo', 'self-service']
+  },
+  {
+    id: 'ref-kg-proteinas',
+    category: 'refeicoes',
+    name: 'Comida por Quilo — Proteínas',
+    description:
+      'Buffet com seleção especial de proteínas nobres, carnes e peixes, além de todos os acompanhamentos. Preço por quilo.',
+    serves: 'Por quilo',
+    image: IMG.board,
+    price: 98.7,
+    tags: ['por quilo', 'self-service']
+  },
+  {
+    id: 'ref-costelinha-tambaqui',
+    category: 'refeicoes',
+    name: 'Refeição de Costelinha de Tambaqui',
+    description:
+      'Costelinha de tambaqui frita e crocante, com arroz, farofa, vinagrete e acompanhamentos. Prato fartura para a família.',
+    serves: 'Inteira serve 3 a 4 pessoas',
+    image: IMG.friedFish,
+    badge: 'Destaque',
+    ...whole(111.5, 201.5),
+    tags: ['peixe', 'regional', 'família']
+  },
+  {
+    id: 'ref-file-tambaqui',
+    category: 'refeicoes',
+    name: 'Refeição de Filé de Tambaqui',
+    description:
+      'Filé de tambaqui preparado no ponto certo, acompanhado de arroz, farofa, vinagrete e guarnições. Um clássico da beira-rio.',
+    serves: 'Inteira serve 3 a 4 pessoas',
+    image: IMG.fishFillet,
     badge: 'Chef',
-    bestSeller: true,
-    tags: ['fogão a lenha', 'peixe', 'regional']
+    ...whole(111.5, 213.0),
+    tags: ['peixe', 'regional', 'família']
   },
   {
-    id: 'r2',
+    id: 'ref-frango',
     category: 'refeicoes',
-    name: 'Costela Fogo de Chão',
+    name: 'Refeição de Frango',
     description:
-      'Costela bovina assada lentamente por 8 horas na lenha, desmanchando ao toque. Acompanha mandioca dourada e farofa de bacon.',
-    price: 99.9,
-    serves: 'Serve 2 a 3 pessoas',
-    image: img('1544025162-d76694265947'),
-    badge: 'Destaque',
-    bestSeller: true,
-    tags: ['fogão a lenha', 'carne']
+      'Frango caipira saboroso com arroz, farofa, salada e acompanhamentos. Comida de casa, do jeito que a família gosta.',
+    serves: 'Inteira serve 3 a 4 pessoas',
+    image: IMG.friedChicken,
+    ...whole(99.95, 193.5),
+    tags: ['frango', 'caseiro', 'família']
   },
   {
-    id: 'r3',
+    id: 'ref-carne-assada',
     category: 'refeicoes',
-    name: 'Galinha Caipira na Panela',
+    name: 'Refeição de Carne Assada',
     description:
-      'Galinha caipira cozida no tacho de ferro com açafrão da terra, servida com arroz, quiabo e pirão cremoso.',
-    price: 74.9,
-    serves: 'Serve 2 pessoas',
-    image: img('1604908176997-125f25cc6f3d'),
-    tags: ['caseiro', 'regional']
+      'Carne assada macia e suculenta, com arroz, farofa, vinagrete e guarnições. Sabor de churrasco para compartilhar.',
+    serves: 'Inteira serve 3 a 4 pessoas',
+    image: IMG.grilledMeat,
+    ...whole(111.5, 213.0),
+    tags: ['carne', 'família']
   },
   {
-    id: 'r4',
+    id: 'ref-pirao-costelinha-peixe',
     category: 'refeicoes',
-    name: 'Tilápia Frita Completa',
+    name: 'Pirão com Costelinha de Peixe',
     description:
-      'Tilápia inteira frita na hora, crocante por fora e macia por dentro. Acompanha arroz, batata frita e molho tártaro.',
-    price: 69.9,
-    serves: 'Serve 2 pessoas',
-    image: img('1535399831218-d5bd36d1a6b3'),
-    tags: ['peixe', 'frito']
-  },
-  {
-    id: 'r5',
-    category: 'refeicoes',
-    name: 'Picanha na Brasa',
-    description:
-      'Picanha selada na brasa no ponto que você preferir, com arroz, vinagrete, farofa e fritas. Sabor de churrasco à beira-rio.',
-    price: 109.9,
-    serves: 'Serve 2 a 3 pessoas',
-    image: img('1558030006-450675393462'),
-    badge: 'Premium',
-    tags: ['carne', 'brasa']
-  },
-
-  // ---------- HAMBÚRGUERES ----------
-  {
-    id: 'h1',
-    category: 'hamburgueres',
-    name: 'Monte Castelo Burger',
-    description:
-      'Blend artesanal 180g, cheddar maturado, bacon na lenha, cebola caramelizada e molho da casa no pão brioche.',
-    price: 38.9,
-    image: img('1568901346375-23c9450c58cd'),
-    badge: 'Mais Pedido',
-    bestSeller: true,
-    tags: ['artesanal', 'bacon']
-  },
-  {
-    id: 'h2',
-    category: 'hamburgueres',
-    name: 'Smash do Rio',
-    description:
-      'Dois smash burgers suculentos, queijo prato derretido, picles e maionese defumada. Crocância e sabor em cada mordida.',
-    price: 34.9,
-    image: img('1550547660-d9450f859349'),
-    tags: ['smash', 'duplo']
-  },
-  {
-    id: 'h3',
-    category: 'hamburgueres',
-    name: 'Burger Caipira',
-    description:
-      'Hambúrguer de costela, queijo coalho grelhado, ovo caipira, alface e tomate. Uma homenagem ao interior.',
-    price: 36.9,
-    image: img('1571091718767-18b5b1457add'),
-    tags: ['costela', 'ovo']
-  },
-  {
-    id: 'h4',
-    category: 'hamburgueres',
-    name: 'Veggie do Balneário',
-    description:
-      'Burger de grão-de-bico e legumes, queijo, rúcula, tomate seco e maionese de ervas no pão australiano.',
-    price: 32.9,
-    image: img('1520072959219-c595dc870360'),
-    badge: 'Veg',
-    tags: ['vegetariano']
-  },
-
-  // ---------- PORÇÕES ----------
-  {
-    id: 'p1',
-    category: 'porcoes',
-    name: 'Isca de Tilápia',
-    description:
-      'Iscas de tilápia empanadas e fritas na hora, douradinhas, com molho tártaro e limão. Perfeita para compartilhar.',
-    price: 54.9,
+      'Pirão cremoso da casa servido com costelinha de peixe. Tradição ribeirinha em prato fartura.',
     serves: 'Serve 3 a 4 pessoas',
-    image: img('1606755962773-d324e0a13086'),
+    image: IMG.broth,
+    price: 129.0,
+    tags: ['peixe', 'regional']
+  },
+  {
+    id: 'ref-pirao-file-peixe',
+    category: 'refeicoes',
+    name: 'Pirão com Filé de Peixe',
+    description:
+      'Pirão cremoso acompanhado de filé de peixe macio. Conforto e sabor de Rondônia.',
+    serves: 'Serve 3 a 4 pessoas',
+    image: IMG.broth,
+    price: 122.0,
+    tags: ['peixe', 'regional']
+  },
+
+  // ===================== PORÇÕES =====================
+  {
+    id: 'por-isca-peixe',
+    category: 'porcoes',
+    name: 'Isca de Peixe',
+    description:
+      'Iscas de peixe empanadas e fritas na hora, douradinhas e crocantes. Perfeitas para compartilhar.',
+    image: IMG.friedFish,
     badge: 'Destaque',
     bestSeller: true,
+    price: 28.5,
     tags: ['peixe', 'compartilhar']
   },
   {
-    id: 'p2',
+    id: 'por-torresminho-peixe',
     category: 'porcoes',
-    name: 'Mandioca com Costelinha',
-    description:
-      'Mandioca cozida e frita até dourar, servida com costelinha suína na lenha e geleia de pimenta artesanal.',
-    price: 49.9,
-    serves: 'Serve 3 a 4 pessoas',
-    image: img('1623653387945-2fd25214f8fc'),
-    tags: ['fogão a lenha', 'porco']
+    name: 'Torresminho de Peixe',
+    description: 'Torresmo de peixe crocante, sequinho e irresistível. O petisco da casa.',
+    image: IMG.friedFish,
+    price: 25.0,
+    tags: ['peixe', 'petisco']
   },
   {
-    id: 'p3',
+    id: 'por-empanados',
+    category: 'porcoes',
+    name: 'Empanados',
+    description: 'Porção de empanados crocantes, douradinhos e quentinhos.',
+    image: IMG.friedFish,
+    price: 24.0,
+    tags: ['petisco']
+  },
+  {
+    id: 'por-saladas',
+    category: 'porcoes',
+    name: 'Saladas',
+    description: 'Salada fresca da casa, leve e colorida, para acompanhar.',
+    image: IMG.salad,
+    price: 16.0,
+    tags: ['salada', 'leve']
+  },
+  {
+    id: 'por-meio-asa-picante',
+    category: 'porcoes',
+    name: 'Meio da Asa Picante',
+    description:
+      'Meios da asa de frango no tempero picante da casa, suculentos e cheios de sabor.',
+    image: IMG.chickenWings,
+    ...whole(34.5, 54.0),
+    tags: ['frango', 'picante']
+  },
+  {
+    id: 'por-frango-passarinho',
     category: 'porcoes',
     name: 'Frango a Passarinho',
     description:
-      'Frango temperado com alho dourado e cheiro-verde, frito crocante. Aquele petisco clássico de beira de rio.',
-    price: 44.9,
-    serves: 'Serve 3 pessoas',
-    image: img('1562967914-608f82629710'),
+      'Frango a passarinho com alho dourado e cheiro-verde, frito crocante. Clássico de beira de rio.',
+    image: IMG.friedChicken,
+    bestSeller: true,
+    ...whole(26.0, 40.5),
     tags: ['frango', 'frito']
   },
   {
-    id: 'p4',
+    id: 'por-calabresa',
     category: 'porcoes',
-    name: 'Batata Rústica Trufada',
-    description:
-      'Batatas rústicas com alecrim, parmesão e um toque de azeite trufado. Crocância irresistível.',
-    price: 36.9,
-    serves: 'Serve 2 a 3 pessoas',
-    image: img('1518013431117-eb1465fa5752'),
-    tags: ['vegetariano']
+    name: 'Calabresa Acebolada',
+    description: 'Calabresa fatiada e grelhada com cebola. Acompanha bem aquela gelada.',
+    image: IMG.sausage,
+    ...whole(26.0, 40.5),
+    tags: ['petisco']
   },
   {
-    id: 'p5',
+    id: 'por-carne-assada',
     category: 'porcoes',
-    name: 'Tábua de Frios da Casa',
-    description:
-      'Seleção de queijos, embutidos artesanais, azeitonas, geleia e torradas. Ótima para acompanhar os drinks.',
-    price: 64.9,
-    serves: 'Serve 4 pessoas',
-    image: img('1452195100486-9cc805987862'),
-    badge: 'Premium',
-    tags: ['compartilhar', 'queijos']
-  },
-
-  // ---------- BEBIDAS ----------
-  {
-    id: 'b1',
-    category: 'bebidas',
-    name: 'Suco Natural da Fruta',
-    description:
-      'Sucos naturais feitos na hora: maracujá, abacaxi com hortelã, acerola ou laranja. Pergunte os do dia.',
-    price: 12.9,
-    image: img('1622597467836-f3285f2131b8'),
-    tags: ['natural', 'sem álcool']
+    name: 'Porção de Carne Assada',
+    description: 'Carne assada macia e suculenta em porção generosa para a mesa.',
+    image: IMG.grilledMeat,
+    ...whole(42.0, 59.8),
+    tags: ['carne', 'compartilhar']
   },
   {
-    id: 'b2',
-    category: 'bebidas',
-    name: 'Água de Coco Gelada',
-    description:
-      'Água de coco natural, servida bem gelada. A bebida perfeita para os dias de sol à beira do rio.',
-    price: 9.9,
-    image: img('1536759808958-93c95f4a76a9'),
-    tags: ['natural', 'sem álcool']
+    id: 'por-batata-frita',
+    category: 'porcoes',
+    name: 'Batata Frita',
+    description: 'Batatas fritas crocantes por fora e macias por dentro. Sempre um sucesso.',
+    image: IMG.fries,
+    ...whole(20.0, 28.5),
+    tags: ['compartilhar']
   },
   {
-    id: 'b3',
-    category: 'bebidas',
-    name: 'Cerveja Long Neck',
-    description:
-      'Cervejas geladas em garrafa long neck. Pilsen, puro malte e opções sem glúten. Estupidamente gelada.',
-    price: 11.9,
-    image: img('1608270586620-248524c67de9'),
-    tags: ['cerveja']
+    id: 'por-acompanhamentos',
+    category: 'porcoes',
+    name: 'Acompanhamentos',
+    description: 'Porção de acompanhamentos para completar seu pedido.',
+    image: IMG.board,
+    price: 17.5,
+    tags: ['acompanhamento']
   },
   {
-    id: 'b4',
-    category: 'bebidas',
-    name: 'Refrigerante Lata',
+    id: 'por-costelinha-tambaqui',
+    category: 'porcoes',
+    name: 'Costelinha de Tambaqui',
     description:
-      'Linha completa de refrigerantes em lata, sempre gelados. Versões zero açúcar disponíveis.',
-    price: 7.9,
-    image: img('1581636625402-29b2a704ef13'),
-    tags: ['sem álcool']
-  },
-
-  // ---------- DRINKS ----------
-  {
-    id: 'd1',
-    category: 'drinks',
-    name: 'Caipirinha do Urupá',
-    description:
-      'Cachaça artesanal, limão-taiti e açúcar mascavo, com um toque de capim-santo. O clássico repaginado.',
-    price: 24.9,
-    image: img('1551538827-9c037cb4f32a'),
-    badge: 'Assinatura',
+      'Costelinha de tambaqui frita e crocante, com limão e molho da casa. Para dividir (ou não!).',
+    image: IMG.friedFish,
+    badge: 'Destaque',
     bestSeller: true,
-    tags: ['coquetel', 'cachaça']
+    ...whole(33.8, 57.6),
+    tags: ['peixe', 'regional']
   },
   {
-    id: 'd2',
-    category: 'drinks',
-    name: 'Pôr do Sol Tropical',
-    description:
-      'Rum, maracujá, laranja e xarope de mel, em camadas que lembram o entardecer no rio. Drink autoral.',
-    price: 29.9,
-    image: img('1536935338788-846bb9981813'),
-    badge: 'Autoral',
-    tags: ['coquetel', 'tropical']
+    id: 'por-file-tambaqui',
+    category: 'porcoes',
+    name: 'Filé de Tambaqui',
+    description: 'Filé de tambaqui crocante e macio, no ponto certo. A estrela do rio.',
+    image: IMG.fishFillet,
+    badge: 'Chef',
+    ...whole(39.0, 67.5),
+    tags: ['peixe', 'regional']
   },
   {
-    id: 'd3',
-    category: 'drinks',
-    name: 'Gin Tônica de Frutas',
-    description:
-      'Gin premium, água tônica, frutas vermelhas e ervas frescas. Refrescante e aromático.',
-    price: 32.9,
-    image: img('1514362545857-3bc16c4c7d1b'),
-    tags: ['coquetel', 'gin']
+    id: 'por-lambari',
+    category: 'porcoes',
+    name: 'Lambari',
+    description: 'Lambaris fritos crocantes, douradinhos, com limão. Petisco tradicional.',
+    image: IMG.friedFish,
+    price: 45.0,
+    tags: ['peixe', 'petisco']
   },
   {
-    id: 'd4',
-    category: 'drinks',
-    name: 'Mojito da Casa',
+    id: 'por-bolinho-peixe',
+    category: 'porcoes',
+    name: 'Bolinho de Peixe',
+    description: 'Bolinhos de peixe fritos, crocantes por fora e macios por dentro.',
+    image: IMG.friedFish,
+    price: 60.5,
+    tags: ['peixe', 'petisco']
+  },
+  {
+    id: 'por-pirao',
+    category: 'porcoes',
+    name: 'Pirão',
+    description: 'Pirão cremoso da casa, no capricho.',
+    image: IMG.broth,
+    price: 30.5,
+    tags: ['regional']
+  },
+  {
+    id: 'por-caldo-feijao',
+    category: 'porcoes',
+    name: 'Caldo de Feijão',
+    description: 'Caldo de feijão encorpado e quentinho, do jeito caseiro.',
+    image: IMG.broth,
+    price: 30.5,
+    tags: ['caldo', 'caseiro']
+  },
+
+  // ===================== BEBIDAS =====================
+  // Cervejas garrafa
+  { id: 'beb-heineken-600', category: 'bebidas', name: 'Heineken 600 ml', description: 'Garrafa 600 ml, estupidamente gelada.', image: IMG.beerBottle, price: 19.0, tags: ['cerveja'] },
+  { id: 'beb-antartica-600', category: 'bebidas', name: 'Original Antarctica 600 ml', description: 'Garrafa 600 ml, bem gelada.', image: IMG.beerBottle, price: 14.0, tags: ['cerveja'] },
+  { id: 'beb-skol-600', category: 'bebidas', name: 'Skol 600 ml', description: 'Garrafa 600 ml, geladíssima.', image: IMG.beerBottle, price: 12.0, tags: ['cerveja'] },
+  { id: 'beb-brahma-chopp-600', category: 'bebidas', name: 'Brahma Chopp 600 ml', description: 'Garrafa 600 ml, bem gelada.', image: IMG.beerMug, price: 12.0, tags: ['cerveja'] },
+  { id: 'beb-amstel-600', category: 'bebidas', name: 'Amstel 600 ml', description: 'Garrafa 600 ml, gelada.', image: IMG.beerBottle, price: 15.0, tags: ['cerveja'] },
+  { id: 'beb-spaten-600', category: 'bebidas', name: 'Spaten 600 ml', description: 'Garrafa 600 ml, gelada.', image: IMG.beerBottle, price: 15.0, tags: ['cerveja'] },
+  { id: 'beb-corona', category: 'bebidas', name: 'Corona', description: 'Cerveja Corona gelada.', image: IMG.beerBottle, price: 10.0, tags: ['cerveja'] },
+  { id: 'beb-zero-alcool', category: 'bebidas', name: 'Cerveja Zero Álcool', description: 'Opção sem álcool, bem gelada.', image: IMG.beerBottle, price: 11.0, tags: ['cerveja', 'sem álcool'] },
+  // Cervejas lata
+  { id: 'beb-skol-lata', category: 'bebidas', name: 'Skol Lata', description: 'Lata gelada.', image: IMG.beerBottle, price: 5.0, tags: ['cerveja', 'lata'] },
+  { id: 'beb-brahma-lata', category: 'bebidas', name: 'Brahma Lata', description: 'Lata gelada.', image: IMG.beerBottle, price: 5.0, tags: ['cerveja', 'lata'] },
+  { id: 'beb-original-amstel-lata', category: 'bebidas', name: 'Original / Amstel Lata', description: 'Lata gelada (Original ou Amstel).', image: IMG.beerBottle, price: 7.0, tags: ['cerveja', 'lata'] },
+  // Long necks
+  { id: 'beb-corona-ln', category: 'bebidas', name: 'Corona Long Neck', description: 'Long neck gelada.', image: IMG.beerBottle, price: 11.0, tags: ['cerveja', 'long neck'] },
+  { id: 'beb-spaten-ln', category: 'bebidas', name: 'Spaten Long Neck', description: 'Long neck gelada.', image: IMG.beerBottle, price: 11.0, tags: ['cerveja', 'long neck'] },
+  { id: 'beb-heineken-ln', category: 'bebidas', name: 'Heineken Long Neck', description: 'Long neck gelada.', image: IMG.beerBottle, price: 11.0, tags: ['cerveja', 'long neck'] },
+  { id: 'beb-heineken-ln-zero', category: 'bebidas', name: 'Heineken Long Neck Zero', description: 'Long neck sem álcool, gelada.', image: IMG.beerBottle, price: 13.0, tags: ['cerveja', 'long neck', 'sem álcool'] },
+  { id: 'beb-budweiser-ln', category: 'bebidas', name: 'Budweiser Long Neck', description: 'Long neck gelada.', image: IMG.beerBottle, price: 11.0, tags: ['cerveja', 'long neck'] },
+  { id: 'beb-brahma-ln', category: 'bebidas', name: 'Brahma Long Neck', description: 'Long neck gelada.', image: IMG.beerBottle, price: 11.0, tags: ['cerveja', 'long neck'] },
+  { id: 'beb-brahma-ln-zero', category: 'bebidas', name: 'Brahma Long Neck Zero', description: 'Long neck sem álcool, gelada.', image: IMG.beerBottle, price: 13.0, tags: ['cerveja', 'long neck', 'sem álcool'] },
+  // Refrigerantes
+  { id: 'beb-coca-2l', category: 'bebidas', name: 'Coca-Cola 2 L', description: 'Refrigerante 2 litros.', image: IMG.cocaCan, price: 19.0, tags: ['refrigerante'] },
+  { id: 'beb-coca-litro', category: 'bebidas', name: 'Coca-Cola 1 L', description: 'Refrigerante 1 litro.', image: IMG.cocaCan, price: 12.0, tags: ['refrigerante'] },
+  { id: 'beb-coca-15-zero', category: 'bebidas', name: 'Coca-Cola Zero 1,5 L', description: 'Refrigerante zero açúcar 1,5 litro.', image: IMG.cocaCan, price: 16.0, tags: ['refrigerante', 'zero'] },
+  { id: 'beb-coca-zero-600', category: 'bebidas', name: 'Coca-Cola Zero 600 ml', description: 'Refrigerante zero açúcar 600 ml.', image: IMG.cocaCan, price: 12.0, tags: ['refrigerante', 'zero'] },
+  { id: 'beb-coca-zero-2l', category: 'bebidas', name: 'Coca-Cola Zero 2 L', description: 'Refrigerante zero açúcar 2 litros.', image: IMG.cocaCan, price: 19.0, tags: ['refrigerante', 'zero'] },
+  { id: 'beb-sukita-2l', category: 'bebidas', name: 'Sukita 2 L', description: 'Refrigerante de laranja 2 litros.', image: IMG.soda, price: 13.0, tags: ['refrigerante'] },
+  { id: 'beb-tuchaua-2l', category: 'bebidas', name: 'Tuchaua 2 L', description: 'Refrigerante regional 2 litros.', image: IMG.soda, price: 15.0, tags: ['refrigerante', 'regional'] },
+  { id: 'beb-refri-lata', category: 'bebidas', name: 'Refrigerante Lata', description: 'Lata 350 ml, gelada.', image: IMG.soda, price: 8.0, tags: ['refrigerante', 'lata'] },
+  // Águas
+  { id: 'beb-agua', category: 'bebidas', name: 'Água Mineral', description: 'Garrafa de água mineral gelada.', image: IMG.water, price: 4.0, tags: ['água', 'sem álcool'] },
+  { id: 'beb-agua-gas', category: 'bebidas', name: 'Água Mineral com Gás', description: 'Água mineral com gás, gelada.', image: IMG.water, price: 5.0, tags: ['água', 'sem álcool'] },
+  { id: 'beb-agua-tonica', category: 'bebidas', name: 'Água Tônica', description: 'Água tônica gelada.', image: IMG.water, price: 10.0, tags: ['água', 'sem álcool'] },
+  { id: 'beb-h2o', category: 'bebidas', name: 'H2O', description: 'H2O saborizada, gelada.', image: IMG.water, price: 10.0, tags: ['sem álcool'] },
+  // Energéticos / isotônicos
+  { id: 'beb-red-bull', category: 'bebidas', name: 'Red Bull', description: 'Energético Red Bull gelado.', image: IMG.energy, price: 18.0, tags: ['energético'] },
+  { id: 'beb-gatorade', category: 'bebidas', name: 'Gatorade', description: 'Isotônico Gatorade gelado.', image: IMG.isotonic, price: 10.0, tags: ['isotônico'] },
+  // Caipirinhas
+  { id: 'beb-caipirinha-pinga', category: 'bebidas', name: 'Caipirinha de Pinga', description: 'Caipirinha de cachaça com limão e açúcar. O clássico bem-feito.', image: IMG.caipirinha, badge: 'Assinatura', bestSeller: true, price: 15.0, tags: ['drink', 'cachaça'] },
+  { id: 'beb-caipirinha-vodka', category: 'bebidas', name: 'Caipirinha de Vodka', description: 'Caipirinha de vodka com limão e açúcar. Refrescante e marcante.', image: IMG.caipirinha, price: 17.0, tags: ['drink', 'vodka'] },
+
+  // ===================== SUCOS =====================
+  {
+    id: 'suc-laranja-maracuja',
+    category: 'sucos',
+    name: 'Suco de Laranja ou Maracujá',
     description:
-      'Rum branco, hortelã do quintal, limão e soda. Borbulhante, leve e perfeito para o calor.',
-    price: 27.9,
-    image: img('1551024709-8f23befc6f87'),
-    tags: ['coquetel', 'refrescante']
+      'Suco natural da fruta, feito na hora. Sabores: laranja ou maracujá. Escolha copo ou jarra.',
+    image: IMG.juiceJar,
+    badge: 'Destaque',
+    price: 15.0,
+    variations: [
+      { label: 'Copo', price: 15.0 },
+      { label: 'Jarra', price: 21.0 }
+    ],
+    tags: ['natural', 'sem álcool']
+  },
+  {
+    id: 'suc-outros-sabores',
+    category: 'sucos',
+    name: 'Sucos Naturais — Outros Sabores',
+    description:
+      'Sucos naturais feitos na hora. Sabores: acerola, cupuaçu, goiaba, abacaxi, abacaxi com hortelã, cenoura com limão, beterraba e limão. Escolha copo ou jarra.',
+    image: IMG.juiceCups,
+    price: 13.5,
+    variations: [
+      { label: 'Copo', price: 13.5 },
+      { label: 'Jarra', price: 17.0 }
+    ],
+    tags: ['natural', 'sem álcool']
+  },
+
+  // ===================== SOBREMESAS =====================
+  {
+    id: 'sob-pudim',
+    category: 'sobremesas',
+    name: 'Pudim',
+    description: 'Pudim de leite cremoso, com aquela calda caramelizada. O doce final perfeito.',
+    image: IMG.pudim,
+    price: 10.0,
+    tags: ['sobremesa', 'doce']
   }
 ]
 
@@ -271,3 +389,9 @@ export const BEST_SELLERS = MENU.filter((item) => item.bestSeller)
 
 export const formatPrice = (value) =>
   value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+
+// Menor preço de um item (considera variações).
+export const itemFromPrice = (item) =>
+  item.variations?.length
+    ? Math.min(...item.variations.map((v) => v.price))
+    : item.price

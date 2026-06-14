@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Flame, Star, Plus } from 'lucide-react'
-import { formatPrice } from '../data/menu'
+import { formatPrice, itemFromPrice } from '../data/menu'
 import { useData } from '../context/DataContext'
 import SmartImage from './SmartImage'
 
@@ -55,8 +55,13 @@ export default function BestSellers({ onOpen }) {
                   <h3 className="font-display text-xl font-semibold text-white">{item.name}</h3>
                   <p className="mt-1 line-clamp-2 text-sm text-sand-100/75">{item.description}</p>
                   <div className="mt-3 flex items-center justify-between">
-                    <span className="font-display text-2xl font-bold text-gold-300">
-                      {formatPrice(item.price)}
+                    <span className="font-display text-2xl font-bold leading-none text-gold-300">
+                      {item.variations?.length && (
+                        <span className="block text-[10px] font-medium uppercase tracking-wide text-sand-100/60">
+                          a partir de
+                        </span>
+                      )}
+                      {formatPrice(itemFromPrice(item))}
                     </span>
                     <span className="grid h-10 w-10 place-items-center rounded-full bg-gold-shine text-forest-900 shadow-gold transition-transform duration-300 group-hover:rotate-90">
                       <Plus size={18} />

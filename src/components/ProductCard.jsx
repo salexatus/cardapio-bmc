@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Plus, Star } from 'lucide-react'
 import SmartImage from './SmartImage'
-import { formatPrice } from '../data/menu'
+import { formatPrice, itemFromPrice } from '../data/menu'
 
 const BADGE_STYLES = {
   Chef: 'bg-forest-700 text-gold-200',
@@ -61,8 +61,17 @@ export default function ProductCard({ item, onOpen, index = 0 }) {
           </span>
         )}
         <div className="mt-3 flex items-center justify-between pt-1">
-          <span className="font-display text-xl font-bold text-forest-800 dark:text-gold-300">
-            {formatPrice(item.price)}
+          <span className="font-display text-xl font-bold leading-none text-forest-800 dark:text-gold-300">
+            {item.variations?.length ? (
+              <span className="flex flex-col">
+                <span className="text-[10px] font-medium uppercase tracking-wide text-forest-500/70 dark:text-sand-100/50">
+                  a partir de
+                </span>
+                {formatPrice(itemFromPrice(item))}
+              </span>
+            ) : (
+              formatPrice(item.price)
+            )}
           </span>
           <span className="grid h-9 w-9 place-items-center rounded-full bg-gold-shine text-forest-900 shadow-gold transition-transform duration-300 group-hover:rotate-90">
             <Plus size={18} />

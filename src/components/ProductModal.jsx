@@ -127,34 +127,76 @@ export default function ProductModal({ item, onClose }) {
                 </div>
               )}
 
-              <div className="mt-5 flex items-center justify-between">
-                <div>
-                  <span className="block text-[11px] uppercase tracking-widest text-forest-500/70 dark:text-sand-100/50">
-                    Valor
-                  </span>
-                  <span className="font-display text-3xl font-bold text-forest-800 dark:text-gold-300">
-                    {formatPrice(item.price)}
-                  </span>
+              {item.variations?.length ? (
+                <div className="mt-5">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-[11px] uppercase tracking-widest text-forest-500/70 dark:text-sand-100/50">
+                      Escolha o tamanho
+                    </span>
+                    <button
+                      onClick={share}
+                      className="grid h-9 w-9 place-items-center rounded-full bg-forest-600/10 text-forest-700 transition hover:bg-forest-600/20 dark:bg-white/10 dark:text-sand-100"
+                      aria-label="Compartilhar prato"
+                    >
+                      {shared ? <Check size={16} className="text-emerald-500" /> : <Share2 size={16} />}
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {item.variations.map((v) => (
+                      <a
+                        key={v.label}
+                        href={waLink(
+                          `Olá! Quero pedir *${item.name}* — ${v.label} (${formatPrice(v.price)}) do cardápio do ${config.name}. 🌿`
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between rounded-2xl border border-forest-600/15 bg-forest-600/5 px-4 py-3 transition hover:border-[#25D366]/50 hover:bg-[#25D366]/10 dark:border-white/10 dark:bg-white/5"
+                      >
+                        <span className="flex items-center gap-2 font-semibold text-forest-900 dark:text-sand-100">
+                          <span>{v.label}</span>
+                          <span className="font-display text-lg text-forest-800 dark:text-gold-300">
+                            {formatPrice(v.price)}
+                          </span>
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1ba84f]">
+                          <MessageCircle size={17} /> Pedir
+                        </span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
-                <button
-                  onClick={share}
-                  className="grid h-11 w-11 place-items-center rounded-full bg-forest-600/10 text-forest-700 transition hover:bg-forest-600/20 dark:bg-white/10 dark:text-sand-100"
-                  aria-label="Compartilhar prato"
-                >
-                  {shared ? <Check size={18} className="text-emerald-500" /> : <Share2 size={18} />}
-                </button>
-              </div>
+              ) : (
+                <>
+                  <div className="mt-5 flex items-center justify-between">
+                    <div>
+                      <span className="block text-[11px] uppercase tracking-widest text-forest-500/70 dark:text-sand-100/50">
+                        Valor
+                      </span>
+                      <span className="font-display text-3xl font-bold text-forest-800 dark:text-gold-300">
+                        {formatPrice(item.price)}
+                      </span>
+                    </div>
+                    <button
+                      onClick={share}
+                      className="grid h-11 w-11 place-items-center rounded-full bg-forest-600/10 text-forest-700 transition hover:bg-forest-600/20 dark:bg-white/10 dark:text-sand-100"
+                      aria-label="Compartilhar prato"
+                    >
+                      {shared ? <Check size={18} className="text-emerald-500" /> : <Share2 size={18} />}
+                    </button>
+                  </div>
 
-              <a
-                href={waLink(
-                  `Olá! Quero pedir *${item.name}* (${formatPrice(item.price)}) do cardápio do ${config.name}. 🌿`
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn mt-5 w-full bg-[#25D366] py-3.5 text-white shadow-lg hover:-translate-y-0.5"
-              >
-                <MessageCircle size={19} /> Pedir pelo WhatsApp
-              </a>
+                  <a
+                    href={waLink(
+                      `Olá! Quero pedir *${item.name}* (${formatPrice(item.price)}) do cardápio do ${config.name}. 🌿`
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn mt-5 w-full bg-[#25D366] py-3.5 text-white shadow-lg hover:-translate-y-0.5"
+                  >
+                    <MessageCircle size={19} /> Pedir pelo WhatsApp
+                  </a>
+                </>
+              )}
             </div>
           </motion.div>
         </motion.div>
