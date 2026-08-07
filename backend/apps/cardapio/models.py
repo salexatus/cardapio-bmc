@@ -60,6 +60,7 @@ class Event(models.Model):
     artist = models.CharField(max_length=120, blank=True, default="")
     description = models.TextField(blank=True, default="")
     image = models.TextField(blank=True, default="")
+    video = models.TextField(blank=True, default="")  # URL de vídeo curto (mp4) opcional
     tag = models.CharField(max_length=40, blank=True, default="")
     sort = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -86,6 +87,24 @@ class GalleryImage(models.Model):
         ordering = ["sort"]
         verbose_name = "foto da galeria"
         verbose_name_plural = "fotos da galeria"
+
+    def __str__(self):
+        return self.alt or f"Foto {self.pk}"
+
+
+class DrinkPhoto(models.Model):
+    """Foto de bebida/drink para a seção-vitrine (estilo 'food porn')."""
+
+    src = models.TextField()  # URL pública
+    caption = models.CharField(max_length=120, blank=True, default="")  # nome do drink
+    alt = models.CharField(max_length=160, blank=True, default="")
+    sort = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["sort"]
+        verbose_name = "foto de bebida/drink"
+        verbose_name_plural = "fotos de bebidas/drinks"
 
     def __str__(self):
         return self.alt or f"foto #{self.pk}"

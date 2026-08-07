@@ -1,33 +1,47 @@
-// Kill-switch service worker.
-// O site já foi um PWA (build React+Vite com vite-plugin-pwa). Navegadores que
-// visitaram aquela versão podem ter um service worker antigo preso, servindo
-// assets velhos (inclusive o painel /admin com a URL da API errada) → login falha.
-// Este SW substitui o antigo, limpa TODOS os caches, se desregistra e recarrega
-// as abas, devolvendo o site "limpo" (sem PWA/offline). Auto-destrutivo.
-self.addEventListener('install', () => self.skipWaiting())
+// Service worker do BMC — habilita instalação como app (PWA) e cache offline leve.
+const CACHE = 'bmc-v3'
+const CORE = ['/', '/index.html', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png']
+
+self.addEventListener('install', (event) => {
+  self.skipWaiting()
+  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE).catch(() => {})))
+})
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
-      try {
-        const keys = await caches.keys()
-        await Promise.all(keys.map((k) => caches.delete(k)))
-      } catch (e) {
-        /* ignora */
-      }
-      try {
-        await self.registration.unregister()
-      } catch (e) {
-        /* ignora */
-      }
-      const clients = await self.clients.matchAll({ type: 'window' })
-      for (const client of clients) {
-        try {
-          client.navigate(client.url)
-        } catch (e) {
-          /* ignora */
-        }
-      }
+      const keys = await caches.keys()
+      await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+      await self.clients.claim()
     })()
+  )
+})
+
+self.addEventListener('fetch', (event) => {
+  const req = event.request
+  if (req.method !== 'GET') return
+  const url = new URL(req.url)
+  // Só lida com o próprio site; a API (outro domínio) sempre vai pela rede.
+  if (url.origin !== self.location.origin) return
+
+  // Navegação (HTML): rede primeiro, cai no cache offline se falhar.
+  if (req.mode === 'navigate') {
+    event.respondWith(fetch(req).catch(() => caches.match('/index.html')))
+    return
+  }
+
+  // Assets estáticos (hashed): cache primeiro, senão busca e guarda.
+  event.respondWith(
+    caches.match(req).then(
+      (hit) =>
+        hit ||
+        fetch(req)
+          .then((res) => {
+            const copy = res.clone()
+            caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {})
+            return res
+          })
+          .catch(() => hit)
+    )
   )
 })

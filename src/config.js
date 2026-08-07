@@ -36,29 +36,40 @@ export const DEFAULT_CONTENT = {
     title: 'Sabores à beira do',
     titleGold: 'Rio Urupá',
     subtitle:
-      'Explore por categoria ou busque seu prato favorito. Toque em qualquer item para ver os detalhes e pedir.'
+      'Explore por categoria ou busque seu prato favorito. Toque em qualquer item para ver os detalhes e pedir.',
+    image: ''
   },
   bestSellers: {
     eyebrow: 'Os favoritos da casa',
     title: 'Mais',
     titleGold: 'Vendidos',
-    subtitle: 'Os pratos e drinks que conquistaram quem já sentou à nossa beira-rio.'
+    subtitle: 'Os pratos e drinks que conquistaram quem já sentou à nossa beira-rio.',
+    image: ''
+  },
+  drinks: {
+    eyebrow: 'Para brindar',
+    title: 'Bebidas &',
+    titleGold: 'Drinks',
+    subtitle: 'Geladas, coloridas e irresistíveis — a companhia perfeita para o seu momento à beira-rio.'
   },
   gallery: {
     eyebrow: 'Momentos',
     title: 'Galeria',
-    titleGold: 'Interativa'
+    titleGold: 'Interativa',
+    image: ''
   },
   events: {
     eyebrow: 'Programe-se',
     title: 'Agenda de',
     titleGold: 'Eventos',
-    subtitle: 'Música ao vivo, gastronomia e noites especiais à beira do rio.'
+    subtitle: 'Música ao vivo, gastronomia e noites especiais à beira do rio.',
+    image: ''
   },
   location: {
     eyebrow: 'Venha nos visitar',
     title: 'Como',
-    titleGold: 'Chegar'
+    titleGold: 'Chegar',
+    image: ''
   }
 }
 

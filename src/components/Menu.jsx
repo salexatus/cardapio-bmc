@@ -4,11 +4,27 @@ import { Search, X, SlidersHorizontal } from 'lucide-react'
 import { useData } from '../context/DataContext'
 import ProductCard from './ProductCard'
 
+// Categorias de bebida que têm uma vitrine própria (seção "Bebidas & Drinks").
+const BEVERAGE_CATS = ['bebidas', 'drinks']
+
 export default function Menu({ onOpen }) {
-  const { menu, categories, config } = useData()
+  const { menu, categories, config, drinks } = useData()
   const c = config.content.menu
   const [active, setActive] = useState('todos')
   const [query, setQuery] = useState('')
+
+  // Ao clicar num chip: se a categoria é de bebida e NÃO tem itens de cardápio,
+  // mas há fotos na vitrine, leva o usuário até a seção "Bebidas & Drinks".
+  const handleTab = (cat) => {
+    const hasItems = menu.some((m) => m.category === cat.id)
+    if (!hasItems && BEVERAGE_CATS.includes(cat.id) && drinks?.length > 0) {
+      document.getElementById('bebidas')?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
+    setActive(cat.id)
+  }
+
+  const isBeverageActive = BEVERAGE_CATS.includes(active)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -39,6 +55,15 @@ export default function Menu({ onOpen }) {
         </p>
       </div>
 
+      {c.image && (
+        <img
+          src={c.image}
+          alt=""
+          loading="lazy"
+          className="mx-auto mt-8 aspect-[21/9] w-full max-w-4xl rounded-3xl object-cover shadow-md"
+        />
+      )}
+
       {/* Busca */}
       <div className="sticky top-[72px] z-30 mx-auto mt-8 max-w-xl">
         <div className="flex items-center gap-2 rounded-full glass px-4 py-2.5 shadow-glass">
@@ -65,7 +90,7 @@ export default function Menu({ onOpen }) {
           return (
             <button
               key={cat.id}
-              onClick={() => setActive(cat.id)}
+              onClick={() => handleTab(cat)}
               className={`relative shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                 isActive
                   ? 'text-forest-900'
@@ -97,10 +122,23 @@ export default function Menu({ onOpen }) {
 
       {filtered.length === 0 && (
         <div className="mt-12 text-center text-forest-700/70 dark:text-sand-100/60">
-          <p className="text-lg font-medium">Nada encontrado para “{query}”.</p>
-          <button onClick={() => setQuery('')} className="btn-gold mt-4">
-            Limpar busca
-          </button>
+          {query ? (
+            <>
+              <p className="text-lg font-medium">Nada encontrado para “{query}”.</p>
+              <button onClick={() => setQuery('')} className="btn-gold mt-4">
+                Limpar busca
+              </button>
+            </>
+          ) : isBeverageActive && drinks?.length > 0 ? (
+            <>
+              <p className="text-lg font-medium">Nossas bebidas e drinks estão logo abaixo. 🍹</p>
+              <a href="#bebidas" className="btn-gold mt-4">
+                Ver Bebidas &amp; Drinks
+              </a>
+            </>
+          ) : (
+            <p className="text-lg font-medium">Ainda não há itens nesta categoria.</p>
+          )}
         </div>
       )}
     </section>

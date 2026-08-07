@@ -2,17 +2,19 @@ import { useEffect, useState } from 'react'
 import { Menu as MenuIcon, X, Moon, Sun, MapPin } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useData } from '../context/DataContext'
-
-const LINKS = [
-  { href: '#cardapio', label: 'Cardápio' },
-  { href: '#mais-vendidos', label: 'Mais Vendidos' },
-  { href: '#galeria', label: 'Galeria' },
-  { href: '#eventos', label: 'Eventos' },
-  { href: '#localizacao', label: 'Localização' }
-]
+import InstallButton from './InstallButton'
 
 export default function Navbar({ dark, toggleDark }) {
-  const { config, mapsLink } = useData()
+  const { config, mapsLink, drinks } = useData()
+  const LINKS = [
+    { href: '#cardapio', label: 'Cardápio' },
+    { href: '#mais-vendidos', label: 'Mais Vendidos' },
+    // Só mostra "Bebidas" quando há fotos na vitrine de Bebidas & Drinks.
+    ...(drinks?.length > 0 ? [{ href: '#bebidas', label: 'Bebidas' }] : []),
+    { href: '#galeria', label: 'Galeria' },
+    { href: '#eventos', label: 'Eventos' },
+    { href: '#localizacao', label: 'Localização' }
+  ]
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -67,6 +69,7 @@ export default function Navbar({ dark, toggleDark }) {
           >
             {dark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
+          <InstallButton className="hidden items-center gap-1.5 rounded-full bg-forest-900 px-4 py-2 text-sm font-bold text-sand-100 ring-1 ring-white/10 transition hover:bg-forest-800 dark:bg-white/10 dark:hover:bg-white/20 sm:inline-flex" />
           <a
             href={mapsLink}
             target="_blank"
@@ -113,6 +116,10 @@ export default function Navbar({ dark, toggleDark }) {
             >
               <MapPin size={16} /> Como Chegar
             </a>
+            <InstallButton
+              onClick={() => setOpen(false)}
+              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-2xl bg-forest-900 px-4 py-3 text-base font-bold text-sand-100 ring-1 ring-white/10 dark:bg-white/10"
+            />
           </motion.div>
         )}
       </AnimatePresence>

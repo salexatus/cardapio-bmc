@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import Menu from '../components/Menu'
 import BestSellers from '../components/BestSellers'
+import Drinks from '../components/Drinks'
 import Gallery from '../components/Gallery'
 import Events from '../components/Events'
 import Location from '../components/Location'
@@ -32,6 +33,7 @@ function SiteContent() {
         <Hero />
         <Menu onOpen={setSelected} />
         <BestSellers onOpen={setSelected} />
+        <Drinks />
         <Gallery />
         <Events />
         <Location />

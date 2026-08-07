@@ -22,10 +22,11 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .cookies import clear_auth_cookies, set_auth_cookies
-from .models import Category, Event, GalleryImage, MenuItem, SiteConfig
+from .models import Category, DrinkPhoto, Event, GalleryImage, MenuItem, SiteConfig
 from .permissions import ReadOnlyOrAuthenticated
 from .serializers import (
     CategorySerializer,
+    DrinkPhotoSerializer,
     EventSerializer,
     GalleryImageSerializer,
     LoginSerializer,
@@ -75,6 +76,9 @@ def site_data(request):
         "events": EventSerializer(Event.objects.all(), many=True).data,
         "gallery": GalleryImageSerializer(
             GalleryImage.objects.all(), many=True
+        ).data,
+        "drinks": DrinkPhotoSerializer(
+            DrinkPhoto.objects.all(), many=True
         ).data,
     })
 
@@ -152,16 +156,49 @@ class LogoutView(APIView):
 
 # ===== Upload de imagem (painel) =====
 class UploadView(APIView):
-    """POST /upload — recebe um arquivo e devolve a URL pública."""
+    """POST /upload — recebe um arquivo e devolve a URL pública.
+
+    Imagens são redimensionadas (máx 1600px) e convertidas para WebP (leve),
+    para o site carregar rápido. Vídeos e outros formatos são salvos como vieram.
+    """
 
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
+
+    IMAGE_EXTS = {"jpg", "jpeg", "png", "webp", "bmp", "tiff", "heic", "heif"}
+    MAX_SIDE = 1600
 
     def post(self, request):
         f = request.FILES.get("file") or request.FILES.get("image")
         if not f:
             return Response({"erro": "arquivo_ausente"}, status=400)
         ext = (f.name.rsplit(".", 1)[-1] if "." in f.name else "bin").lower()
+
+        if ext in self.IMAGE_EXTS:
+            try:
+                import io
+
+                from django.core.files.base import ContentFile
+                from PIL import Image, ImageOps
+
+                img = Image.open(f)
+                img = ImageOps.exif_transpose(img)
+                img = (
+                    img.convert("RGBA")
+                    if img.mode in ("RGBA", "LA", "P")
+                    else img.convert("RGB")
+                )
+                img.thumbnail((self.MAX_SIDE, self.MAX_SIDE), Image.LANCZOS)
+                buf = io.BytesIO()
+                img.save(buf, format="WEBP", quality=80, method=6)
+                caminho = default_storage.save(
+                    f"uploads/{uuid.uuid4().hex}.webp", ContentFile(buf.getvalue())
+                )
+                url = request.build_absolute_uri(settings.MEDIA_URL + caminho)
+                return Response({"url": url}, status=status.HTTP_201_CREATED)
+            except Exception:
+                f.seek(0)  # otimização falhou → salva o original abaixo
+
         nome = f"uploads/{uuid.uuid4().hex}.{ext}"
         caminho = default_storage.save(nome, f)
         url = request.build_absolute_uri(settings.MEDIA_URL + caminho)
@@ -172,6 +209,37 @@ class UploadView(APIView):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [ReadOnlyOrAuthenticated]
+
+    def perform_create(self, serializer):
+        # Gera o id (slug) a partir do nome quando não vier do cliente, garantindo unicidade.
+        from django.utils.text import slugify
+
+        cid = (serializer.validated_data.get("id") or "").strip()
+        if not cid:
+            cid = slugify(serializer.validated_data.get("label", "")) or "categoria"
+        base, i = cid, 2
+        while Category.objects.filter(pk=cid).exists():
+            cid = f"{base}-{i}"
+            i += 1
+        serializer.save(id=cid)
+
+    def destroy(self, request, *args, **kwargs):
+        # category em MenuItem é PROTECT: bloqueia remoção com itens, com mensagem clara.
+        from django.db.models import ProtectedError
+
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except ProtectedError:
+            return Response(
+                {"erro": "Esta categoria tem itens no cardápio. Mova ou exclua os itens antes de removê-la."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class DrinkViewSet(viewsets.ModelViewSet):
+    queryset = DrinkPhoto.objects.all()
+    serializer_class = DrinkPhotoSerializer
     permission_classes = [ReadOnlyOrAuthenticated]
 
 

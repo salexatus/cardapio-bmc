@@ -30,6 +30,15 @@ export default function Gallery() {
         </a>
       </div>
 
+      {c.image && (
+        <img
+          src={c.image}
+          alt=""
+          loading="lazy"
+          className="mx-auto mt-8 aspect-[21/9] w-full max-w-4xl rounded-3xl object-cover shadow-md"
+        />
+      )}
+
       <div className="mt-9 grid auto-rows-[150px] grid-cols-2 gap-3 sm:auto-rows-[200px] md:grid-cols-4">
         {gallery.map((g, i) => (
           <motion.button

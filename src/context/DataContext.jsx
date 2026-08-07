@@ -16,7 +16,8 @@ export function DataProvider({ children }) {
     categories: [],
     menu: [],
     events: [],
-    gallery: []
+    gallery: [],
+    drinks: []
   })
 
   const reload = async () => {

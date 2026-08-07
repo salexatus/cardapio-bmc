@@ -9,6 +9,17 @@ export default function Location() {
   const c = config.content.location
   const [copied, setCopied] = useState(false)
 
+  // Só embeds válidos do Google Maps funcionam em iframe. Links de compartilhamento
+  // (maps.app.goo.gl / goo.gl) NÃO podem ser embutidos → montamos o mapa a partir
+  // do endereço. Isso deixa o mapa à prova de erro (mobile e desktop).
+  const mapEmbed = config.mapsEmbed || ''
+  const isEmbeddable = mapEmbed.includes('output=embed') || mapEmbed.includes('/maps/embed')
+  const mapSrc = isEmbeddable
+    ? mapEmbed
+    : `https://www.google.com/maps?q=${encodeURIComponent(
+        config.mapsQuery || config.address || config.name
+      )}&output=embed`
+
   const shareSite = async () => {
     const data = {
       title: config.name,
@@ -38,6 +49,15 @@ export default function Location() {
         </h2>
       </div>
 
+      {c.image && (
+        <img
+          src={c.image}
+          alt=""
+          loading="lazy"
+          className="mx-auto mt-8 aspect-[21/9] w-full max-w-4xl rounded-3xl object-cover shadow-md"
+        />
+      )}
+
       <div className="mt-10 grid gap-6 lg:grid-cols-5">
         {/* Mapa */}
         <motion.div
@@ -49,7 +69,7 @@ export default function Location() {
         >
           <iframe
             title="Mapa do Balneário Monte Castelo"
-            src={config.mapsEmbed}
+            src={mapSrc}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             className="h-[320px] w-full border-0 grayscale-[0.15] sm:h-[420px]"

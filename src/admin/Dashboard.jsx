@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
-import { UtensilsCrossed, CalendarDays, Images, Settings, LayoutTemplate, LogOut, ExternalLink } from 'lucide-react'
+import { UtensilsCrossed, Tags, Martini, CalendarDays, Images, Settings, LayoutTemplate, LogOut, ExternalLink } from 'lucide-react'
 import { api } from '../lib/apiClient'
 import { CATEGORIES as SEED_CATEGORIES } from '../data/menu'
-import { menuSchema, eventSchema, gallerySchema } from './schemas'
+import { menuSchema, categorySchema, drinkSchema, eventSchema, gallerySchema } from './schemas'
 import CollectionManager from './CollectionManager'
 import ConfigEditor from './ConfigEditor'
 import ContentEditor from './ContentEditor'
 
 const TABS = [
   { id: 'menu', label: 'Cardápio', icon: UtensilsCrossed },
+  { id: 'categories', label: 'Categorias', icon: Tags },
+  { id: 'drinks', label: 'Bebidas & Drinks', icon: Martini },
   { id: 'events', label: 'Eventos', icon: CalendarDays },
   { id: 'gallery', label: 'Galeria', icon: Images },
   { id: 'content', label: 'Conteúdo', icon: LayoutTemplate },
@@ -100,6 +102,20 @@ export default function Dashboard({ session, onLogout }) {
             schema={menuSchema(categories)}
             title="Itens do cardápio"
             emptyDefaults={{ category: categories[0]?.value || '', price: 0 }}
+          />
+        )}
+        {tab === 'categories' && (
+          <CollectionManager
+            table="categories"
+            schema={categorySchema}
+            title="Categorias do cardápio"
+          />
+        )}
+        {tab === 'drinks' && (
+          <CollectionManager
+            table="drinks"
+            schema={drinkSchema}
+            title="Bebidas & Drinks (vitrine)"
           />
         )}
         {tab === 'events' && (

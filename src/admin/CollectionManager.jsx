@@ -3,7 +3,13 @@ import { Plus, Pencil, Trash2, Loader2, X } from 'lucide-react'
 import { useTable } from './useTable'
 import RecordForm from './RecordForm'
 
-const rowTitle = (row) => row.name || row.title || row.alt || 'Item'
+const rowTitle = (row) =>
+  row.name ||
+  row.title ||
+  (row.icon ? `${row.icon} ${row.label || ''}`.trim() : row.label) ||
+  row.caption ||
+  row.alt ||
+  'Item'
 const rowImage = (row) => row.image || row.src || null
 
 export default function CollectionManager({ table, schema, title, emptyDefaults = {} }) {

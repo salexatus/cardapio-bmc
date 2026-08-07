@@ -39,6 +39,11 @@ export default function RecordForm({ schema, value, onSave, onCancel }) {
             {field.label}
             {field.required && <span className="text-gold-400"> *</span>}
           </label>
+          {field.hint && (
+            <p className="mb-1.5 text-[11px] normal-case tracking-normal text-gold-300/80">
+              {field.hint}
+            </p>
+          )}
 
           {field.type === 'text' && (
             <input
@@ -121,6 +126,14 @@ export default function RecordForm({ schema, value, onSave, onCancel }) {
 
           {field.type === 'image' && (
             <ImageUpload value={form[field.key]} onChange={(url) => set(field.key, url)} />
+          )}
+
+          {field.type === 'video' && (
+            <ImageUpload
+              kind="video"
+              value={form[field.key]}
+              onChange={(url) => set(field.key, url)}
+            />
           )}
         </div>
       ))}

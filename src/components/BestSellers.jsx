@@ -29,6 +29,15 @@ export default function BestSellers({ onOpen }) {
           </p>
         </div>
 
+        {c.image && (
+          <img
+            src={c.image}
+            alt=""
+            loading="lazy"
+            className="mx-auto mt-8 aspect-[21/9] w-full max-w-4xl rounded-3xl object-cover shadow-lg ring-1 ring-white/10"
+          />
+        )}
+
         <div className="no-scrollbar mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
           {bestSellers.map((item, i) => (
             <motion.button

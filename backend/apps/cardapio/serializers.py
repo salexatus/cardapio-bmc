@@ -3,15 +3,24 @@ from django.contrib.auth import authenticate, get_user_model
 from django.db.models import Q
 from rest_framework import serializers
 
-from .models import Category, Event, GalleryImage, MenuItem, SiteConfig
+from .models import Category, DrinkPhoto, Event, GalleryImage, MenuItem, SiteConfig
 
 User = get_user_model()
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    # id é o slug (PK). Opcional no POST: se ausente, a view gera a partir do nome.
+    id = serializers.CharField(required=False)
+
     class Meta:
         model = Category
         fields = ["id", "label", "icon", "sort"]
+
+
+class DrinkPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DrinkPhoto
+        fields = ["id", "src", "caption", "alt", "sort", "created_at"]
 
 
 class MenuItemSerializer(serializers.ModelSerializer):
@@ -34,7 +43,7 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = [
             "id", "title", "day", "month", "weekday", "time", "artist",
-            "description", "image", "tag", "sort", "created_at",
+            "description", "image", "video", "tag", "sort", "created_at",
         ]
 
 

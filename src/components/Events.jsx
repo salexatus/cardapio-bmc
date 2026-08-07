@@ -25,6 +25,15 @@ export default function Events() {
           </p>
         </div>
 
+        {c.image && (
+          <img
+            src={c.image}
+            alt=""
+            loading="lazy"
+            className="mx-auto mt-8 aspect-[21/9] w-full max-w-4xl rounded-3xl object-cover shadow-md"
+          />
+        )}
+
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {events.map((ev, i) => (
             <motion.article
@@ -35,13 +44,25 @@ export default function Events() {
               transition={{ duration: 0.5, delay: i * 0.08 }}
               className="card-hover group flex flex-col overflow-hidden rounded-3xl bg-white shadow-card/20 ring-1 ring-forest-900/5 dark:bg-forest-900/70 dark:ring-white/10"
             >
-              <div className="relative h-44 w-full overflow-hidden">
-                <SmartImage
-                  src={ev.image}
-                  alt={ev.title}
-                  className="h-full w-full"
-                  imgClassName="group-hover:scale-105 transition-transform duration-700"
-                />
+              <div className="relative aspect-[4/5] w-full overflow-hidden">
+                {ev.video ? (
+                  <video
+                    src={ev.video}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    poster={ev.image || undefined}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                ) : (
+                  <SmartImage
+                    src={ev.image}
+                    alt={ev.title}
+                    className="h-full w-full"
+                    imgClassName="group-hover:scale-105 transition-transform duration-700"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-forest-950/70 to-transparent" />
                 <div className="absolute left-4 top-4 flex h-16 w-16 flex-col items-center justify-center rounded-2xl bg-white/95 text-forest-900 shadow-lg backdrop-blur dark:bg-forest-950/90 dark:text-sand-100">
                   <span className="font-display text-2xl font-bold leading-none">{ev.day}</span>

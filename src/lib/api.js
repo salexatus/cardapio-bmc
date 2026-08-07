@@ -32,10 +32,13 @@ const mapEventRow = (r) => ({
   artist: r.artist,
   description: r.description,
   image: r.image,
+  video: r.video || '',
   tag: r.tag
 })
 
 const mapGalleryRow = (r) => ({ id: r.id, src: r.src, alt: r.alt || '', span: r.span || '' })
+
+const mapDrinkRow = (r) => ({ id: r.id, src: r.src, caption: r.caption || '', alt: r.alt || '' })
 
 const mapConfigRow = (r) => ({
   name: r.name,
@@ -59,7 +62,8 @@ const seedPayload = (source) => ({
   categories: SEED_CATEGORIES,
   menu: SEED_MENU,
   events: SEED_EVENTS,
-  gallery: SEED_GALLERY
+  gallery: SEED_GALLERY,
+  drinks: []
 })
 
 export async function loadSiteData() {
@@ -76,7 +80,8 @@ export async function loadSiteData() {
       categories: d.categories?.length ? d.categories : SEED_CATEGORIES,
       menu: d.menu?.length ? d.menu.map(mapMenuRow).filter((m) => m.available) : SEED_MENU,
       events: d.events?.length ? d.events.map(mapEventRow) : SEED_EVENTS,
-      gallery: d.gallery?.length ? d.gallery.map(mapGalleryRow) : SEED_GALLERY
+      gallery: d.gallery?.length ? d.gallery.map(mapGalleryRow) : SEED_GALLERY,
+      drinks: d.drinks?.length ? d.drinks.map(mapDrinkRow) : []
     }
   } catch (err) {
     console.warn('[BMC] Falha ao carregar da API, usando sementes:', err?.message)

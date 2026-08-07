@@ -9,6 +9,7 @@ router.register("categories", views.CategoryViewSet, basename="category")
 router.register("menu-items", views.MenuItemViewSet, basename="menuitem")
 router.register("events", views.EventViewSet, basename="event")
 router.register("gallery", views.GalleryViewSet, basename="gallery")
+router.register("drinks", views.DrinkViewSet, basename="drink")
 
 urlpatterns = [
     path("health", views.health, name="health"),

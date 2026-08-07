@@ -41,9 +41,11 @@ export default function Hero() {
         )}
       </motion.div>
 
-      {/* Overlays */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-forest-950/70 via-forest-950/40 to-forest-950/90" />
+      {/* Overlays — mais escuros p/ o título contrastar com a foto de fundo */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-forest-950/85 via-forest-950/70 to-forest-950/95" />
       <div className="absolute inset-0 -z-10 bg-hero-radial" />
+      {/* Vinheta central atrás do texto p/ legibilidade */}
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_center,rgba(0,0,0,0.55),transparent_70%)]" />
 
       <motion.div
         style={{ opacity }}
@@ -63,7 +65,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-balance sm:text-6xl md:text-7xl"
+          className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-balance drop-shadow-[0_3px_16px_rgba(0,0,0,0.75)] sm:text-6xl md:text-7xl"
         >
           {config.name.split(' ')[0]}{' '}
           <span className="gold-text">{config.name.split(' ').slice(1).join(' ')}</span>
@@ -73,7 +75,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.35 }}
-          className="mt-5 max-w-xl text-pretty text-base text-sand-100/90 sm:text-lg"
+          className="mt-5 max-w-xl text-pretty text-base text-sand-100/95 drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] sm:text-lg"
         >
           {config.tagline}. {config.description}
         </motion.p>

@@ -7,14 +7,28 @@ import ImageUpload from './ImageUpload'
 const inputCls =
   'w-full rounded-lg bg-forest-800/60 px-3 py-2 text-sm text-sand-100 outline-none ring-1 ring-white/10 focus:ring-gold-400/60 placeholder:text-sand-100/40'
 
+// Campo de imagem opcional (banner) presente em todas as dobras.
+const IMAGE_FIELD = {
+  key: 'image',
+  label: 'Imagem da seção (banner) — opcional',
+  type: 'image',
+  hint: 'Tamanho ideal: 1600 × 686 px (proporção 21:9, paisagem). JPG até ~400 KB. Se ajusta sozinho em qualquer tela.'
+}
+
 // Campos de título compartilhados pelas dobras (seções).
 const TITLE_FIELDS = [
   { key: 'eyebrow', label: 'Rótulo (linha pequena acima do título)' },
   { key: 'title', label: 'Título' },
   { key: 'titleGold', label: 'Parte do título em dourado' },
-  { key: 'subtitle', label: 'Subtítulo', type: 'textarea' }
+  { key: 'subtitle', label: 'Subtítulo', type: 'textarea' },
+  IMAGE_FIELD
 ]
-const TITLE_NO_SUB = TITLE_FIELDS.filter((f) => f.key !== 'subtitle')
+const TITLE_NO_SUB = [
+  { key: 'eyebrow', label: 'Rótulo (linha pequena acima do título)' },
+  { key: 'title', label: 'Título' },
+  { key: 'titleGold', label: 'Parte do título em dourado' },
+  IMAGE_FIELD
+]
 
 // Estrutura do formulário: um grupo por dobra do site.
 const GROUPS = [
@@ -24,7 +38,12 @@ const GROUPS = [
     hint: 'A primeira dobra — imagem de fundo, selo e botões. O título grande usa o "Nome" e o "Slogan/Descrição" da aba Configurações.',
     fields: [
       { key: 'badge', label: 'Selo (linha pequena no topo)' },
-      { key: 'image', label: 'Imagem de fundo', type: 'image' },
+      {
+        key: 'image',
+        label: 'Imagem de fundo',
+        type: 'image',
+        hint: 'Tamanho ideal: 1920 × 1080 px (proporção 16:9, paisagem). JPG até ~500 KB. Cobre a tela inteira (foco no centro da foto).'
+      },
       { key: 'ctaMenu', label: 'Botão 1 — texto (Cardápio)' },
       { key: 'ctaWhatsapp', label: 'Botão 2 — texto (WhatsApp)' },
       { key: 'ctaMaps', label: 'Botão 3 — texto (Como chegar)' }
@@ -32,6 +51,17 @@ const GROUPS = [
   },
   { key: 'menu', label: 'Seção “Cardápio”', fields: TITLE_FIELDS },
   { key: 'bestSellers', label: 'Seção “Mais Vendidos”', fields: TITLE_FIELDS },
+  {
+    key: 'drinks',
+    label: 'Seção “Bebidas & Drinks”',
+    hint: 'As fotos desta seção são gerenciadas na aba "Bebidas & Drinks". Aqui você edita só os textos.',
+    fields: [
+      { key: 'eyebrow', label: 'Rótulo (linha pequena acima do título)' },
+      { key: 'title', label: 'Título' },
+      { key: 'titleGold', label: 'Parte do título em dourado' },
+      { key: 'subtitle', label: 'Subtítulo', type: 'textarea' }
+    ]
+  },
   { key: 'gallery', label: 'Seção “Galeria”', fields: TITLE_NO_SUB },
   { key: 'events', label: 'Seção “Eventos”', fields: TITLE_FIELDS },
   { key: 'location', label: 'Seção “Localização”', fields: TITLE_NO_SUB }
@@ -104,6 +134,9 @@ export default function ContentEditor() {
                   <label className="mb-1 block text-xs font-medium text-sand-100/70">
                     {field.label}
                   </label>
+                  {field.hint && (
+                    <p className="mb-1.5 text-[11px] leading-snug text-gold-300/80">{field.hint}</p>
+                  )}
                   {field.type === 'image' ? (
                     <ImageUpload
                       value={content[group.key][field.key]}
