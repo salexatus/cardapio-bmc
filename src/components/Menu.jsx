@@ -5,7 +5,8 @@ import { useData } from '../context/DataContext'
 import ProductCard from './ProductCard'
 
 export default function Menu({ onOpen }) {
-  const { menu, categories } = useData()
+  const { menu, categories, config } = useData()
+  const c = config.content.menu
   const [active, setActive] = useState('todos')
   const [query, setQuery] = useState('')
 
@@ -28,14 +29,13 @@ export default function Menu({ onOpen }) {
     <section id="cardapio" className="relative mx-auto max-w-6xl scroll-mt-24 px-4 py-20 sm:px-6">
       <div className="text-center">
         <span className="eyebrow">
-          <SlidersHorizontal size={14} /> Nosso Cardápio
+          <SlidersHorizontal size={14} /> {c.eyebrow}
         </span>
         <h2 className="section-title mt-3 text-forest-900 dark:text-sand-100">
-          Sabores à beira do <span className="gold-text">Rio Urupá</span>
+          {c.title} <span className="gold-text">{c.titleGold}</span>
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-pretty text-forest-700/70 dark:text-sand-100/60">
-          Explore por categoria ou busque seu prato favorito. Toque em qualquer item para ver os
-          detalhes e pedir.
+          {c.subtitle}
         </p>
       </div>
 

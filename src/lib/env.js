@@ -1,4 +1,5 @@
-// Checagem leve (sem importar o cliente pesado do Supabase).
-export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
+// Base da API REST (backend Django). Em produção, o Pages injeta
+// PUBLIC_API_URL no build; o default cobre o domínio de produção.
+export const API_URL = (
+  import.meta.env.PUBLIC_API_URL || 'https://apicardapiobmc.limadesigner.com.br'
+).replace(/\/$/, '')

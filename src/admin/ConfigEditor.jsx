@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Loader2, CheckCircle2 } from 'lucide-react'
-import { supabase } from '../lib/supabase'
+import { api } from '../lib/apiClient'
 import { configSchema } from './schemas'
 import RecordForm from './RecordForm'
 
@@ -10,21 +10,15 @@ export default function ConfigEditor() {
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    supabase
-      .from('site_config')
-      .select('*')
-      .limit(1)
-      .maybeSingle()
-      .then(({ data }) => {
-        setConfig(data || { id: 1 })
-        setLoading(false)
-      })
+    api
+      .getConfig()
+      .then((data) => setConfig(data && Object.keys(data).length ? data : { id: 1 }))
+      .catch(() => setConfig({ id: 1 }))
+      .finally(() => setLoading(false))
   }, [])
 
   const handleSave = async (record) => {
-    const payload = { ...record, id: record.id || 1 }
-    const { error } = await supabase.from('site_config').upsert(payload, { onConflict: 'id' })
-    if (error) throw error
+    await api.saveConfig(record)
     setSaved(true)
     setTimeout(() => setSaved(false), 2500)
   }
@@ -47,12 +41,7 @@ export default function ConfigEditor() {
           </span>
         )}
       </div>
-      <RecordForm
-        schema={configSchema}
-        value={config}
-        onSave={handleSave}
-        onCancel={() => {}}
-      />
+      <RecordForm schema={configSchema} value={config} onSave={handleSave} onCancel={() => {}} />
     </div>
   )
 }

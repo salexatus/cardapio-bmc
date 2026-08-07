@@ -7,6 +7,7 @@ import { useData } from '../context/DataContext'
 
 export default function Gallery() {
   const { gallery, config } = useData()
+  const c = config.content.gallery
   const [lightbox, setLightbox] = useState(null)
   if (gallery.length === 0) return null
 
@@ -14,10 +15,10 @@ export default function Gallery() {
     <section id="galeria" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-20 sm:px-6">
       <div className="flex flex-col items-center text-center">
         <span className="eyebrow">
-          <Camera size={14} /> Momentos
+          <Camera size={14} /> {c.eyebrow}
         </span>
         <h2 className="section-title mt-3 text-forest-900 dark:text-sand-100">
-          Galeria <span className="gold-text">Interativa</span>
+          {c.title} <span className="gold-text">{c.titleGold}</span>
         </h2>
         <a
           href={config.instagram}

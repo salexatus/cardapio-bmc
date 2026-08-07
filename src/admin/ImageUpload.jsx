@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { Upload, Link2, Loader2, ImageOff } from 'lucide-react'
-import { supabase, STORAGE_BUCKET } from '../lib/supabase'
+import { api } from '../lib/apiClient'
 
 export default function ImageUpload({ value, onChange }) {
   const inputRef = useRef(null)
@@ -13,14 +13,8 @@ export default function ImageUpload({ value, onChange }) {
     setErr(null)
     setUploading(true)
     try {
-      const ext = file.name.split('.').pop()
-      const path = `uploads/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-      const { error } = await supabase.storage
-        .from(STORAGE_BUCKET)
-        .upload(path, file, { cacheControl: '3600', upsert: false })
-      if (error) throw error
-      const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path)
-      onChange(data.publicUrl)
+      const { url } = await api.upload(file)
+      onChange(url)
     } catch (e2) {
       setErr(e2.message || 'Falha no upload')
     } finally {
@@ -48,13 +42,7 @@ export default function ImageUpload({ value, onChange }) {
             {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
             {uploading ? 'Enviando...' : 'Enviar foto'}
           </button>
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFile}
-            className="hidden"
-          />
+          <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
           <div className="flex items-center gap-2 rounded-lg bg-forest-800/60 px-2.5 py-1.5 ring-1 ring-white/10">
             <Link2 size={15} className="shrink-0 text-sand-100/50" />
             <input

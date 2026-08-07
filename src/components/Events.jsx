@@ -4,7 +4,8 @@ import { useData } from '../context/DataContext'
 import SmartImage from './SmartImage'
 
 export default function Events() {
-  const { events, waLink } = useData()
+  const { events, waLink, config } = useData()
+  const c = config.content.events
   if (events.length === 0) return null
   return (
     <section
@@ -14,13 +15,13 @@ export default function Events() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <span className="eyebrow">
-            <CalendarDays size={14} /> Programe-se
+            <CalendarDays size={14} /> {c.eyebrow}
           </span>
           <h2 className="section-title mt-3 text-forest-900 dark:text-sand-100">
-            Agenda de <span className="gold-text">Eventos</span>
+            {c.title} <span className="gold-text">{c.titleGold}</span>
           </h2>
           <p className="mt-3 max-w-xl text-pretty text-forest-700/70 dark:text-sand-100/60">
-            Música ao vivo, gastronomia e noites especiais à beira do rio.
+            {c.subtitle}
           </p>
         </div>
 

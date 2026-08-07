@@ -1,33 +1,42 @@
 # 🌿 Balneário Monte Castelo — Cardápio Digital Premium
 
-Aplicação web premium (PWA) para o **Balneário Monte Castelo**, às margens do Rio Urupá.
+Aplicação web premium para o **Balneário Monte Castelo**, às margens do Rio Urupá.
 Cardápio digital moderno, mobile-first, com busca, filtros, dark mode, animações suaves,
-efeito parallax, glassmorphism, QR Code e botão flutuante de WhatsApp.
+efeito parallax, glassmorphism, QR Code e botão flutuante de WhatsApp — com **painel admin**
+para gerenciar todo o conteúdo.
 
-Construído com **React + Vite + Tailwind CSS + Framer Motion**, com **painel admin** e banco de
-dados via **Supabase**. Pronto para deploy na **Vercel**.
+## 🏗️ Arquitetura (atual)
 
-> 💡 **Funciona sem configuração:** sem o Supabase, o site usa dados-semente embutidos. Ao conectar
-> o Supabase, o conteúdo passa a vir do banco e você gerencia tudo pelo painel em `/admin`.
+```
+Navegador
+   │
+   ├─ cardapio.limadesigner.com.br      → Frontend: Astro + ilhas React (Cloudflare Pages)
+   │                                       HTML/SEO estático; cardápio carregado via API
+   └─ apicardapiobmc.limadesigner.com.br → Backend: Django + DRF (VPS 31.97.28.229)
+                                            Nginx → Gunicorn → Django · PostgreSQL 16
+```
+
+- **Frontend** — **Astro + ilhas React** + Tailwind CSS + Framer Motion, publicado no
+  **Cloudflare Pages**. O HTML é estático (bom p/ SEO); o cardápio é carregado no navegador
+  via `GET /api/v1/site` e o painel `/admin` é uma ilha React que fala REST (login por
+  cookie httpOnly). A URL da API vem de `PUBLIC_API_URL` (`.env`).
+- **Backend** — **Django 5 + DRF + SimpleJWT** (cookie httpOnly) + **PostgreSQL** +
+  WhiteNoise + Gunicorn, em `backend/`. Leitura pública, escrita autenticada.
+
+> ℹ️ **Histórico:** o projeto já foi React+Vite com **Supabase** (banco) e deploy na Vercel.
+> Isso foi **abandonado** — hoje o banco/painel são Django+Postgres próprios e o frontend é
+> Astro no Cloudflare Pages. Ver `deploy.md` para o guia de publicação completo.
 
 ## ✨ Recursos
 
-- 🛠️ **Painel Admin** em `/admin` (Supabase): CRUD de cardápio, eventos, galeria e configurações, com **upload de fotos** e login seguro
+- 🛠️ **Painel Admin** em `/admin`: CRUD de cardápio, eventos, galeria e configurações, com **upload de fotos** e login seguro (cookie JWT httpOnly)
 - 🔄 **Conteúdo dinâmico** — alterações no painel aparecem no site na hora, sem novo deploy
-- 📱 **Mobile First** e totalmente responsivo
-- ⚡ **PWA** instalável (offline, ícone na tela inicial) via `vite-plugin-pwa`
+- 📱 **Mobile First** e totalmente responsivo · **PWA** instalável (manifest)
 - 🔎 **Busca** de produtos + **filtro por categoria** animado
-- 🍽️ **Modal de detalhes** do prato com **zoom** na imagem
-- 🖼️ **Galeria interativa** estilo Instagram com lightbox
-- 📅 **Agenda de eventos** em cartões modernos
-- 📍 **Mapa integrado** (Google Maps) + **QR Code** automático do cardápio
-- 💬 **Botão flutuante de WhatsApp** + pedido direto pelo prato
-- 🔗 **Compartilhamento** nativo (Web Share API)
-- 🌙 **Dark mode** elegante com persistência
-- 🎬 Hero com **vídeo de fundo** (opcional) e **parallax**
-- 🪟 **Glassmorphism** leve e animações com Framer Motion
-- 🚀 **SEO** otimizado (Open Graph, Twitter Card, JSON-LD, sitemap, robots)
-- 🖌️ Lazy loading de imagens com skeleton
+- 🍽️ **Modal de detalhes** do prato com **zoom** · 🖼️ **Galeria** com lightbox · 📅 **Agenda de eventos**
+- 📍 **Mapa** (Google Maps) + **QR Code** automático · 💬 **WhatsApp** flutuante · 🔗 **Web Share**
+- 🌙 **Dark mode** com persistência · 🎬 Hero com parallax · 🪟 Glassmorphism
+- 🚀 **SEO** otimizado (Open Graph, Twitter Card, JSON-LD)
 
 ## 🎨 Identidade visual
 
@@ -42,67 +51,43 @@ Tipografia: **Playfair Display** (títulos) + **Plus Jakarta Sans** (texto).
 
 ## 🚀 Rodando localmente
 
+**Frontend (Astro):**
 ```bash
 npm install
-npm run dev      # http://localhost:5173
-npm run build    # gera /dist
+npm run dev      # http://localhost:4321
+npm run build    # gera /dist (Cloudflare Pages)
 npm run preview  # serve o build de produção
 ```
+A URL da API usada no build vem de `PUBLIC_API_URL` (`.env`; default = produção).
 
-> Os ícones do PWA já vêm gerados em `/public`. Para recriá-los: `node scripts/generate-icons.mjs`.
-
-## ☁️ Deploy na Vercel
-
-1. Suba este projeto para um repositório Git (GitHub/GitLab).
-2. Em [vercel.com](https://vercel.com) → **New Project** → importe o repositório.
-3. A Vercel detecta o Vite automaticamente (config já incluída em `vercel.json`).
-   - Build Command: `npm run build`
-   - Output Directory: `dist`
-4. **Deploy**. Pronto. ✅
-
-Ou via CLI:
-
+**Backend (Django) — dev com SQLite:**
 ```bash
-npm i -g vercel
-vercel --prod
+cd backend
+python3 -m venv .venv && . .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env                 # sem POSTGRES_DB → usa SQLite
+python manage.py migrate
+python manage.py seed_inicial        # popula o cardápio (idempotente)
+python manage.py createsuperuser     # cria login do painel
+python manage.py runserver 127.0.0.1:8050
 ```
 
-## 🛠️ Painel Admin (Supabase)
+## ☁️ Deploy
 
-O painel em **`/admin`** permite gerenciar todo o conteúdo sem mexer no código.
-Configuração única (~10 min):
+O guia completo (servidor, comandos, redeploy, operações) está em **[`deploy.md`](deploy.md)**
+(versionado, sem segredos). As credenciais reais ficam em `credencias.md` (gitignored).
 
-### 1. Crie o projeto no Supabase
-1. Acesse [supabase.com](https://supabase.com) → **New Project** (anote a senha do banco).
-2. Aguarde o projeto provisionar.
+**Resumo:**
+- **Frontend** → Cloudflare Pages (projeto `cardapio`), via `wrangler pages deploy dist`.
+- **Backend** → VPS `31.97.28.229` (Ubuntu, Nginx + **systemd** + certbot). Serviço
+  `apicardapiobmc.service` (Gunicorn `127.0.0.1:8050`); app em `/home/apicardapiobmc/app/backend`.
+  Redeploy = enviar `backend/` + `migrate`/`collectstatic` + `systemctl restart apicardapiobmc`.
 
-### 2. Crie as tabelas e os dados
-1. No Supabase: **SQL Editor** → **New query**.
-2. Cole **todo** o conteúdo de [`supabase/schema.sql`](supabase/schema.sql) e clique em **Run**.
-   - Isso cria as tabelas, a segurança (RLS), o bucket de imagens e já popula o cardápio inicial.
+## 🛠️ Painel Admin
 
-### 3. Crie seu usuário admin
-1. No Supabase: **Authentication** → **Users** → **Add user**.
-2. Informe **e-mail e senha** e marque **Auto Confirm User**. Esse será seu login no painel.
+O painel em **`/admin`** gerencia todo o conteúdo sem mexer no código (login por cookie httpOnly
+contra a API Django):
 
-### 4. Conecte o site ao Supabase
-1. No Supabase: **Project Settings** → **API**. Copie a **Project URL** e a **anon public key**.
-2. Crie um arquivo **`.env`** na raiz (use o [`.env.example`](.env.example) como base):
-   ```bash
-   VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
-   VITE_SUPABASE_ANON_KEY=sua-anon-public-key
-   ```
-3. Reinicie o `npm run dev`. Pronto — acesse **`/admin`**, faça login e gerencie tudo. ✅
-
-### Na Vercel
-Adicione as mesmas variáveis em **Project → Settings → Environment Variables**
-(`VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`) e refaça o deploy.
-
-> 🔒 **Segurança:** a *anon key* é pública (vai no front, tudo bem). A proteção real é a
-> **RLS** do Supabase: qualquer pessoa **lê** o cardápio, mas só usuários **autenticados**
-> conseguem criar/editar/excluir. Nunca exponha a *service_role key*.
-
-### O que dá pra gerenciar no painel
 | Aba             | O que edita                                                        |
 | --------------- | ------------------------------------------------------------------ |
 | Cardápio        | Pratos, preços, fotos, categorias, selos, tags, "mais vendido", disponibilidade |
@@ -110,32 +95,26 @@ Adicione as mesmas variáveis em **Project → Settings → Environment Variable
 | Galeria         | Fotos do mosaico e o tamanho de cada uma                           |
 | Configurações   | WhatsApp, Instagram, endereço, mapa, horário, domínio (QR Code)    |
 
-## 🛠️ Personalização rápida
+## 🗂️ Estrutura
 
-> Com o Supabase conectado, edite tudo pelo **painel `/admin`**. A tabela abaixo vale para os
-> **dados-semente** (usados antes de configurar o Supabase) e para ajustes de design/SEO.
+| Caminho | O que é |
+| --- | --- |
+| `src/pages/{index,admin}.astro` | Rotas do frontend (Astro) |
+| `src/layouts/Base.astro` | Head / SEO / PWA |
+| `src/apps/SiteApp.jsx` | Ilha React do site público |
+| `src/admin/*` | Ilha React do painel admin |
+| `src/lib/{env,api,apiClient}.js` | Dados / cliente REST |
+| `backend/` | API Django (DRF), models em `apps.cardapio` |
+
+## 🛠️ Personalização
+
+Com o backend conectado, edite tudo pelo **painel `/admin`**. Para design/SEO:
 
 | O que mudar              | Onde                                   |
 | ------------------------ | -------------------------------------- |
-| WhatsApp, Instagram, mapa, horário | [`src/config.js`](src/config.js) |
-| Itens do cardápio e preços | [`src/data/menu.js`](src/data/menu.js) |
-| Eventos                  | [`src/data/events.js`](src/data/events.js) |
-| Fotos da galeria         | [`src/components/Gallery.jsx`](src/components/Gallery.jsx) |
-| Vídeo do Hero            | constante `HERO_VIDEO` em [`src/components/Hero.jsx`](src/components/Hero.jsx) |
 | Cores / fontes           | [`tailwind.config.js`](tailwind.config.js) |
-| Domínio (SEO/QR)         | `SITE.url` em `src/config.js` e metatags em `index.html` |
-
-### Adicionar o vídeo do Hero
-
-Hospede um arquivo `.mp4` (ex.: Cloudinary, Vercel Blob, Mux) e cole a URL na
-constante `HERO_VIDEO` em `src/components/Hero.jsx`. Sem vídeo, o Hero usa uma imagem
-com parallax como fallback. Sugestão de cenas: Rio Urupá, comida no fogão a lenha,
-música ao vivo e ambiente familiar.
-
-### Imagens
-
-As imagens usam o Unsplash como placeholder. Substitua pelas fotos reais do balneário
-(de preferência otimizadas em WebP) editando as URLs em `src/data/*` e nos componentes.
+| Head / SEO / PWA         | [`src/layouts/Base.astro`](src/layouts/Base.astro) |
+| Fotos placeholder        | Substituir pelas fotos reais do cliente (via painel ou sementes do backend) |
 
 ---
 

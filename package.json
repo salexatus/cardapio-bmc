@@ -1,29 +1,30 @@
 {
   "name": "balneario-monte-castelo",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
-  "description": "Cardápio digital premium do Balneário Monte Castelo — às margens do Rio Urupá.",
+  "description": "Cardápio digital premium do Balneário Monte Castelo — às margens do Rio Urupá. Frontend Astro + ilhas React, dados via API REST (Django).",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.108.1",
     "framer-motion": "^11.3.19",
     "lucide-react": "^0.417.0",
     "qrcode.react": "^4.0.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^7.17.0"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
+    "@astrojs/react": "^3.6.2",
+    "@astrojs/tailwind": "^5.1.2",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "astro": "^4.16.18",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.40",
-    "tailwindcss": "^3.4.7",
-    "vite": "^5.3.5",
-    "vite-plugin-pwa": "^0.20.1"
+    "tailwindcss": "^3.4.7"
   }
 }

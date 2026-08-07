@@ -44,7 +44,8 @@ function SiteContent() {
   )
 }
 
-export default function SitePage() {
+// Raiz da ilha React do site público (montada em src/pages/index.astro).
+export default function SiteApp() {
   return (
     <DataProvider>
       <SiteContent />

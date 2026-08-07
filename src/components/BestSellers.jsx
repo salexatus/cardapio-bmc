@@ -5,7 +5,8 @@ import { useData } from '../context/DataContext'
 import SmartImage from './SmartImage'
 
 export default function BestSellers({ onOpen }) {
-  const { bestSellers } = useData()
+  const { bestSellers, config } = useData()
+  const c = config.content.bestSellers
   if (bestSellers.length === 0) return null
   return (
     <section
@@ -18,13 +19,13 @@ export default function BestSellers({ onOpen }) {
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <span className="eyebrow text-gold-300">
-            <Flame size={14} /> Os favoritos da casa
+            <Flame size={14} /> {c.eyebrow}
           </span>
           <h2 className="section-title mt-3 text-white">
-            Mais <span className="gold-text">Vendidos</span>
+            {c.title} <span className="gold-text">{c.titleGold}</span>
           </h2>
           <p className="mt-3 max-w-xl text-pretty text-sand-100/70">
-            Os pratos e drinks que conquistaram quem já sentou à nossa beira-rio.
+            {c.subtitle}
           </p>
         </div>
 

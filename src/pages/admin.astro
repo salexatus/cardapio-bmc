@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro'
+import Admin from '../admin/Admin.jsx'
+---
+
+<Base title="Painel Admin | Balneário Monte Castelo" noindex={true}>
+  <!-- Ilha React: painel administrativo (login + CRUD via API REST). -->
+  <Admin client:only="react">
+    <div slot="fallback" class="grid min-h-screen place-items-center bg-forest-950 text-sand-100/50">
+      Carregando painel…
+    </div>
+  </Admin>
+</Base>

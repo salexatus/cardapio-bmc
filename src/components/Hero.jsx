@@ -10,6 +10,8 @@ const POSTER =
 
 export default function Hero() {
   const { config, waLink, mapsLink } = useData()
+  const hero = config.content.hero
+  const bg = hero.image || POSTER
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -30,12 +32,12 @@ export default function Hero() {
             muted
             loop
             playsInline
-            poster={POSTER}
+            poster={bg}
           >
             <source src={HERO_VIDEO} type="video/mp4" />
           </video>
         ) : (
-          <img src={POSTER} alt="Rio Urupá ao entardecer" className="h-full w-full object-cover" />
+          <img src={bg} alt="Rio Urupá ao entardecer" className="h-full w-full object-cover" />
         )}
       </motion.div>
 
@@ -54,7 +56,7 @@ export default function Hero() {
           className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.2em] backdrop-blur-md"
         >
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold-400" />
-          Música ao vivo • Fogão a lenha
+          {hero.badge}
         </motion.span>
 
         <motion.h1
@@ -83,7 +85,7 @@ export default function Hero() {
           className="mt-9 flex w-full flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap"
         >
           <a href="#cardapio" className="btn-gold w-full sm:w-auto">
-            <UtensilsCrossed size={18} /> Ver Cardápio
+            <UtensilsCrossed size={18} /> {hero.ctaMenu}
           </a>
           <a
             href={waLink()}
@@ -91,7 +93,7 @@ export default function Hero() {
             rel="noopener noreferrer"
             className="btn w-full bg-[#25D366] text-white shadow-lg hover:-translate-y-0.5 sm:w-auto"
           >
-            <MessageCircle size={18} /> WhatsApp
+            <MessageCircle size={18} /> {hero.ctaWhatsapp}
           </a>
           <a
             href={mapsLink}
@@ -99,7 +101,7 @@ export default function Hero() {
             rel="noopener noreferrer"
             className="btn-ghost w-full !text-white sm:w-auto"
           >
-            <MapPin size={18} /> Como Chegar
+            <MapPin size={18} /> {hero.ctaMaps}
           </a>
         </motion.div>
       </motion.div>

@@ -6,6 +6,7 @@ import { useData } from '../context/DataContext'
 
 export default function Location() {
   const { config, mapsLink } = useData()
+  const c = config.content.location
   const [copied, setCopied] = useState(false)
 
   const shareSite = async () => {
@@ -30,10 +31,10 @@ export default function Location() {
     <section id="localizacao" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-20 sm:px-6">
       <div className="flex flex-col items-center text-center">
         <span className="eyebrow">
-          <MapPin size={14} /> Venha nos visitar
+          <MapPin size={14} /> {c.eyebrow}
         </span>
         <h2 className="section-title mt-3 text-forest-900 dark:text-sand-100">
-          Como <span className="gold-text">Chegar</span>
+          {c.title} <span className="gold-text">{c.titleGold}</span>
         </h2>
       </div>
 

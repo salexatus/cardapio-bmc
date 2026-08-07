@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Loader2, Lock, LogIn } from 'lucide-react'
-import { supabase } from '../lib/supabase'
+import { api } from '../lib/apiClient'
 
-export default function Login() {
+export default function Login({ onLoggedIn }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -12,12 +12,13 @@ export default function Login() {
     e.preventDefault()
     setErr(null)
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
+    try {
+      const data = await api.login(email, password)
+      onLoggedIn?.(data.usuario)
+    } catch {
       setErr('E-mail ou senha incorretos.')
       setLoading(false)
     }
-    // onAuthStateChange no Admin cuida do redirecionamento.
   }
 
   const cls =

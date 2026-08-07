@@ -9,3 +9,11 @@ yarn-debug.log*
 yarn-error.log*
 .vite
 dev-dist
+
+# Segredos — NUNCA commitar
+credencias.md
+*.local.md
+backend/.env
+
+# env local (só PUBLIC_API_URL; build usa PUBLIC_API_URL=... npm run build)
+.env

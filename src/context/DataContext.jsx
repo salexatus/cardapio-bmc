@@ -1,6 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { loadSiteData } from '../lib/api'
-import { DEFAULT_CONFIG, buildWaLink, buildMapsLink } from '../config'
+import { DEFAULT_CONFIG, mergeContent, buildWaLink, buildMapsLink } from '../config'
+
+// Config inicial com `content` já preenchido (defaults), para as seções nunca
+// renderizarem antes de o conteúdo existir.
+const INITIAL_CONFIG = { ...DEFAULT_CONFIG, content: mergeContent() }
 
 const DataContext = createContext(null)
 
@@ -8,7 +12,7 @@ export function DataProvider({ children }) {
   const [state, setState] = useState({
     loading: true,
     source: 'seed',
-    config: DEFAULT_CONFIG,
+    config: INITIAL_CONFIG,
     categories: [],
     menu: [],
     events: [],
@@ -31,7 +35,7 @@ export function DataProvider({ children }) {
   }, [])
 
   const value = useMemo(() => {
-    const config = state.config || DEFAULT_CONFIG
+    const config = state.config || INITIAL_CONFIG
     return {
       ...state,
       config,

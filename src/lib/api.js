@@ -1,7 +1,8 @@
-// Camada de dados: lê do Supabase quando configurado; caso contrário usa as sementes.
-// Também normaliza nomes de colunas (snake_case → camelCase) usados pela UI.
-import { isSupabaseConfigured } from './env'
-import { DEFAULT_CONFIG } from '../config'
+// Camada de dados do site público: carrega tudo da API REST (endpoint /site)
+// e normaliza nomes de colunas (snake_case → camelCase) usados pela UI.
+// Em caso de falha de rede, cai nas sementes para o site nunca quebrar.
+import { API_URL } from './env'
+import { DEFAULT_CONFIG, mergeContent } from '../config'
 import { MENU as SEED_MENU, CATEGORIES as SEED_CATEGORIES } from '../data/menu'
 import { EVENTS as SEED_EVENTS } from '../data/events'
 import { GALLERY as SEED_GALLERY } from '../data/gallery'
@@ -48,49 +49,37 @@ const mapConfigRow = (r) => ({
   mapsQuery: r.maps_query,
   mapsEmbed: r.maps_embed,
   url: r.url,
-  hours: r.hours
+  hours: r.hours,
+  content: mergeContent(r.content)
+})
+
+const seedPayload = (source) => ({
+  source,
+  config: { ...DEFAULT_CONFIG, content: mergeContent() },
+  categories: SEED_CATEGORIES,
+  menu: SEED_MENU,
+  events: SEED_EVENTS,
+  gallery: SEED_GALLERY
 })
 
 export async function loadSiteData() {
-  // Sem Supabase → site 100% funcional com as sementes.
-  if (!isSupabaseConfigured) {
-    return {
-      source: 'seed',
-      config: DEFAULT_CONFIG,
-      categories: SEED_CATEGORIES,
-      menu: SEED_MENU,
-      events: SEED_EVENTS,
-      gallery: SEED_GALLERY
-    }
-  }
-
   try {
-    const { supabase } = await import('./supabase')
-    const [cfg, cats, menu, events, gallery] = await Promise.all([
-      supabase.from('site_config').select('*').limit(1).maybeSingle(),
-      supabase.from('categories').select('*').order('sort', { ascending: true }),
-      supabase.from('menu_items').select('*').order('sort', { ascending: true }),
-      supabase.from('events').select('*').order('sort', { ascending: true }),
-      supabase.from('gallery').select('*').order('sort', { ascending: true })
-    ])
+    const res = await fetch(`${API_URL}/api/v1/site`, { headers: { Accept: 'application/json' } })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const d = await res.json()
 
     return {
-      source: 'supabase',
-      config: cfg.data ? { ...DEFAULT_CONFIG, ...mapConfigRow(cfg.data) } : DEFAULT_CONFIG,
-      categories: cats.data?.length ? cats.data : SEED_CATEGORIES,
-      menu: menu.data?.length ? menu.data.map(mapMenuRow).filter((m) => m.available) : SEED_MENU,
-      events: events.data?.length ? events.data.map(mapEventRow) : SEED_EVENTS,
-      gallery: gallery.data?.length ? gallery.data.map(mapGalleryRow) : SEED_GALLERY
+      source: 'api',
+      config: d.config
+        ? { ...DEFAULT_CONFIG, ...mapConfigRow(d.config) }
+        : { ...DEFAULT_CONFIG, content: mergeContent() },
+      categories: d.categories?.length ? d.categories : SEED_CATEGORIES,
+      menu: d.menu?.length ? d.menu.map(mapMenuRow).filter((m) => m.available) : SEED_MENU,
+      events: d.events?.length ? d.events.map(mapEventRow) : SEED_EVENTS,
+      gallery: d.gallery?.length ? d.gallery.map(mapGalleryRow) : SEED_GALLERY
     }
   } catch (err) {
-    console.warn('[BMC] Falha ao carregar do Supabase, usando sementes:', err?.message)
-    return {
-      source: 'seed-fallback',
-      config: DEFAULT_CONFIG,
-      categories: SEED_CATEGORIES,
-      menu: SEED_MENU,
-      events: SEED_EVENTS,
-      gallery: SEED_GALLERY
-    }
+    console.warn('[BMC] Falha ao carregar da API, usando sementes:', err?.message)
+    return seedPayload('seed-fallback')
   }
 }
